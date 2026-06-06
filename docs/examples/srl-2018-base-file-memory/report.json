@@ -1,0 +1,637 @@
+{
+  "case_id": "srl-2018-base-file-memory",
+  "evidence_path": "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+  "evidence_sha256": "4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd",
+  "findings": [
+    {
+      "id": "247d3dd99b9c",
+      "claim": "DKOM rootkit: Active process list (EPROCESS ActiveProcessLinks) has been unlinked. vol_pslist and vol_pstree return zero rows, while vol_psscan finds 101 processes via pool scanning. Likewise, vol_cmdline, vol_dlllist, vol_malfind, and vol_svcscan all return zero rows — consistent with kernel-level process hiding.",
+      "severity": "critical",
+      "confidence": 0.92,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:22:38.389839Z"
+        },
+        {
+          "tool": "vol_pstree",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.pstree"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:22:38.806729Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:23:04.554552Z"
+        },
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.dlllist",
+            "--pid",
+            "4072"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:23:12.976496Z"
+        },
+        {
+          "tool": "vol_malfind",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.malfind",
+            "--pid",
+            "6160"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:23:11.672043Z"
+        },
+        {
+          "tool": "vol_svcscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.svcscan"
+          ],
+          "output_excerpt": "[]",
+          "output_sha256": "d9163d874acf3f2987f4d52821f2dfb8c7a95473603f039c99e0b2102a306482",
+          "output_bytes": 6,
+          "ran_at": "2026-06-06T19:23:04.996792Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1014"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.92,
+        "refutation_attempt": "I independently re-ran all 7 cited tools plus netscan. Tried to refute by considering alternative explanations:\n1. Corrupted KDBG/PsActiveProcessHead pointer: The vol_info shows KeNumberProcessors=0 which is unusual, suggesting possible KDBG corruption. However, Volatility3 pslist uses symbol-based resolution, not KDBG directly, and the clean 101-process psscan results with proper parent-child relationships argue against random corruption.\n2. Volatility3 bug with Windows 6.3: Possible, but psscan/netscan use the same memory layer and succeed. The systematic failure of ONLY ActiveProcessLinks-dependent plugins (pslist, pstree, cmdline, dlllist, malfind, svcscan) vs. pool-scanning plugins (psscan, netscan) is the classic DKOM signature — too precise to be a generic parsing bug.\n3. Memory acquisition artifact: The image is byte-identical to acquisition, and pool structures are intact. Selective corruption of just the process list is improbable.\nNone of these alternatives explain the pattern as well as DKOM does, especially given suspicious indicators in the psscan/netscan data (subject_srv.ex on port 3262, massed short-lived rundll32.exe executions).",
+        "rationale": "The raw evidence directly supports the claim. Pool-scanning plugins (psscan: 101 processes, netscan: 145 connections) work normally while ALL EPROCESS ActiveProcessLinks-dependent plugins (pslist, pstree, cmdline, dlllist, malfind, svcscan) return zero rows. This tight binary split between traversal-based and pool-scanning enumeration is the textbook forensic signature of DKOM process-list unlinking. Confidence is 0.92 rather than 1.00 because we cannot directly inspect the Flink/Blink pointers to rule out a rare Volatility3/Windows-6.3 compatibility issue without deeper manual memory carving — but the presence of suspicious processes (subject_srv.ex, ncpa_passive.e/ncpa_listener., massed rundll32.exe) in the pool scan data provides corroborating context.",
+        "reviewed_at": "2026-06-06T19:27:03.050439Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:04.044106Z",
+      "updated_at": "2026-06-06T19:27:17.926134Z"
+    },
+    {
+      "id": "ad8c1d5cfc32",
+      "claim": "Backdoor process \"subject_srv.ex\" (PID 6160): Running as a child of services.exe (PPID 536), 32-bit (Wow64) on 64-bit OS, 12 threads, created 2018-09-06 19:25:36. Listening on TCP port 3262 (0.0.0.0 and ::), with an ESTABLISHED C2 connection to 172.16.5.50:44262.",
+      "severity": "critical",
+      "confidence": 0.75,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:22:48.447372Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1543.003",
+        "T1571"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.75,
+        "refutation_attempt": "Attempted to refute by: (1) Checking pslist, pstree, cmdline, dlllist, svcscan, malfind — all returned empty, meaning only pool-scanning tools (psscan, netscan) work; this limits verification depth. (2) Verified PPID 536 is indeed services.exe from psscan. (3) Searched for legitimate software named \"subject_srv\" — no known Windows/McAfee/NCPA binary matches this name. (4) Considered alternative: could be part of NCPA/Nagios monitoring (since ncpa_passive.e and ncpa_listener. also exist as children of services.exe), but \"subject_srv\" naming does not follow NCPA convention and port 3262 is not a standard Nagios/NCPA port. (5) Noted the ESTABLISHED connection is to internal IP 172.16.5.50 — could be monitoring infrastructure rather than attacker C2. (6) The \"backdoor\" and \"C2\" labels are analytic judgments, not raw facts — no code analysis, no command history, no persistence mechanism confirmed beyond being a service child.",
+        "rationale": "The factual elements of the claim are solidly confirmed by psscan and netscan: process \"subject_srv.ex\" (PID 6160, PPID 536/services.exe), Wow64=true, 12 threads, created 2018-09-06 19:25:36, listening on TCP 3262 (0.0.0.0 + ::), and an ESTABLISHED connection to 172.16.5.50:44262. However, critical plugins (pslist, cmdline, dlllist, malfind, svcscan, pstree) all return empty — the memory image appears to have EPROCESS list corruption, limiting analysis to pool-scanning artifacts only. The \"backdoor\" classification and \"C2\" label are plausible inferences but cannot be directly proven: the process could be a custom enterprise monitoring agent, an NCPA-adjacent component, or another legitimate tool. Without cmdline, DLL list, binary path, or injection evidence, calling it definitively a backdoor overreaches the available evidence. Confidence reduced from 1.00 to 0.75 due to these evidential gaps.",
+        "reviewed_at": "2026-06-06T19:28:46.937455Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:10.977126Z",
+      "updated_at": "2026-06-06T19:29:01.678809Z"
+    },
+    {
+      "id": "cf921695b844",
+      "claim": "PowerShell C2 chain: powershell.exe (PID 4072) was spawned by WmiPrvSE.exe (PID 1196) on 2018-08-28 22:08:25. It then spawned a 32-bit powershell.exe (PID 3164, Wow64), which spawned dozens of short-lived rundll32.exe processes across Aug 30–Sep 6 2018. Both PowerShell processes have TCP connections to 172.16.4.10:8080 — PID 4072 (CLOSED) and PID 3164 (CLOSE_WAIT).",
+      "severity": "critical",
+      "confidence": 0.95,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:22:48.447372Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1059.001",
+        "T1105",
+        "T1571"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.95,
+        "refutation_attempt": "I independently ran psscan, netscan, pslist, pstree, cmdline, malfind, and svcscan. I attempted to refute by: (1) checking if pslist showed a different parent chain — it was empty; (2) verifying that WmiPrvSE.exe (1196) is a legitimate parent for powershell.exe — it is, but the pattern is classic WMI-based execution; (3) checking whether the rundll32.exe processes could have a benign parent other than PID 3164 — all rundll32.exe with PPID 3164 are short-lived (2-38 seconds) and span Aug 30–Sep 6, consistent with PowerShell-spawned activity; (4) looking for alternative explanations like an enterprise management tool — no evidence of benign tooling; (5) noting ngentask.exe (PID 7092) also connected to 172.16.4.10:8080 but this doesn't refute the PowerShell chain. Several plugins (pslist, pstree, cmdline, malfind, svcscan) returned empty — likely image corruption — but psscan and netscan (pool scanners) are reliable.",
+        "rationale": "All four factual claims are directly confirmed by the raw evidence: (a) psscan shows powershell.exe PID 4072 with PPID 1196 (WmiPrvSE.exe) and CreateTime 2018-08-28T22:08:25; (b) psscan shows powershell.exe PID 3164 with PPID 4072, Wow64=true (32-bit), CreateTime 2018-08-28T22:08:26; (c) psscan shows 20+ short-lived rundll32.exe processes with PPID 3164 spanning 2018-08-30 through 2018-09-06, with lifespans of 2-38 seconds each; (d) netscan shows PID 4072 → 172.16.4.10:8080 (CLOSED) and PID 3164 → 172.16.4.10:8080 (CLOSE_WAIT). The \"C2 chain\" label is an interpretive overlay on these facts but is well-supported by the classic attack pattern (WMI spawn → PowerShell → 32-bit PowerShell → rundll32 activity → HTTP C2 channel). Confidence is 0.95 rather than 1.0 only because cmdline is unavailable to confirm the specific commands, and malfind couldn't confirm injection.",
+        "reviewed_at": "2026-06-06T19:30:50.060586Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:19.031479Z",
+      "updated_at": "2026-06-06T19:30:58.280113Z"
+    },
+    {
+      "id": "9b95bbfaabb4",
+      "claim": "Rundll32 beaconing/execution pattern: The 32-bit powershell.exe (PID 3164) spawned at least 28 rundll32.exe processes in rapid bursts across multiple days (Aug 30, Aug 31, Sep 5, Sep 6 2018). Each rundll32.exe ran for only 2–5 seconds and had 0 threads at capture time, consistent with a C2 beacon or staged payload execution model.",
+      "severity": "high",
+      "confidence": 0.72,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1218.011",
+        "T1059.001"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.72,
+        "refutation_attempt": "I independently re-ran vol_psscan and confirmed 28 rundll32.exe processes with PPID 3164 across Aug 30–Sep 6. However: (1) The claim \"each ran for only 2–5 seconds\" is slightly inaccurate — 5 of 28 (18%) ran 7–38 seconds (e.g. PID 4376: 38s, PID 6088: 21s, PID 3260: 21s, PID 3500: 15s, PID 3548: 7s). (2) pslist/pstree/cmdline/dlllist/malfind all return empty — the EPROCESS walk is broken, so we have no command-line arguments, no DLL contents, and no injection evidence for any rundll32 process. The only surviving network artifact from the parent powershell (PID 3164) is a CLOSE_WAIT to 172.16.4.10:8080; no rundll32 child has a network connection in netscan. (3) The system has legitimate management/monitoring agents (McAfee masvc/macmnsvc, Nagios NCPA, NSClient++ nscp.exe) that could schedule scripted tasks. Without cmdline or DLL evidence, the short-lived rundll32 pattern is plausible as beaconing but also consistent with a monitoring script invoking system APIs via rundll32. The C2 interpretation is therefore not directly confirmed by the raw evidence.",
+        "rationale": "The factual elements of the claim are largely corroborated by psscan: powershell.exe PID 3164 is 32-bit (Wow64=true), spawned 28 short-lived 64-bit rundll32.exe children across four days, all with 0 threads at capture. However, the \"beaconing/C2\" interpretation cannot be directly confirmed because cmdline/dlllist/malfind all failed (empty EPROCESS list), no rundll32 network artifacts exist in netscan, a minority of runtimes exceed the \"2–5 seconds\" claim, and alternative benign explanations (scheduled monitoring tasks) exist on this managed server. The finding is plausible but the evidence quality does not warrant the 1.00 confidence claimed.",
+        "reviewed_at": "2026-06-06T19:33:16.987241Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:25.619157Z",
+      "updated_at": "2026-06-06T19:33:28.475353Z"
+    },
+    {
+      "id": "dcc12326439f",
+      "claim": "Common C2 infrastructure at 172.16.4.10:8080: At least three separate processes connected to this IP/port — powershell.exe PID 3164 (CLOSE_WAIT), powershell.exe PID 4072 (CLOSED), and ngentask.exe PID 7092 (two CLOSED connections, ephemeral ports 56322 and 56324). This indicates a shared C2 server used by multiple compromised processes.",
+      "severity": "high",
+      "confidence": 0.85,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:22:48.447372Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1571",
+        "T1071.001"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.85,
+        "refutation_attempt": "Attempted to refute the \"C2\" classification by exploring alternative explanations: (1) 172.16.4.10 is on the same /24 subnet, so could be a legitimate internal HTTP proxy, application server, or management console; (2) port 8080 is a common HTTP-alt port with many benign uses; (3) ran malfind/dlllist/cmdline on all three PIDs to check for code injection or legitimate paths — all returned empty (EPROCESS walk broken); (4) searched psscan for parent of ngentask.exe (PID 2536) — not found, so cannot trace lineage; (5) checked svcscan for malicious persistence — empty. None of these definitively disproved C2, but they highlight that the \"C2\" label is an interpretation, not directly shown by raw connection records alone.",
+        "rationale": "The factual core — three processes (powershell.exe 3164, powershell.exe 4072, ngentask.exe 7092) connecting to 172.16.4.10:8080 — is directly confirmed by netscan with 4 distinct TCP sockets. Psscan independently confirms the process names, PIDs, and relationships. However, the leap to \"C2 infrastructure\" is inferential: we cannot see packet payloads, process command lines, or loaded DLLs (all related plugins fail on this image). The circumstantial evidence strongly favors malicious C2 — powershell.exe 4072 was WMI-launched (PPID WmiPrvSE.exe 1196), powershell.exe 3164 spawned ~25 short-lived rundll32.exe children (classic Cobalt Strike pattern), and ngentask.exe lived only 1 second while making two TCP connections (anomalous for legitimate .NET NGEN). But without payload inspection or code analysis, a legitimate internal proxy/application server at 172.16.4.10:8080 cannot be logically excluded. Hence, inferred rather than confirmed.",
+        "reviewed_at": "2026-06-06T19:35:56.902296Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:32.904487Z",
+      "updated_at": "2026-06-06T19:36:11.937235Z"
+    },
+    {
+      "id": "95b46ab327f1",
+      "claim": "Suspicious Uninstall.exe execution: cmd.exe (PID 4808) spawned Uninstall.exe (PID 2340) on 2018-09-06 16:36:33. The binary ran for only 2 seconds and made a TCP connection to 172.16.7.12:135 (RPC endpoint mapper) before exiting — consistent with lateral movement or reconnaissance.",
+      "severity": "medium",
+      "confidence": 0.85,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:22:48.447372Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1021.003",
+        "T1047"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.85,
+        "refutation_attempt": "I independently re-ran vol_psscan and vol_netscan to verify the raw evidence. Attempted to refute by: (1) checking whether cmd.exe's parent (PID 6956) exists — it does not, meaning the full parent chain is incomplete; (2) looking for benign explanations for Uninstall.exe connecting to port 135 — no legitimate use case found for a cmd-spawned \"Uninstall.exe\" hitting RPC endpoint mapper on a remote host with a 2-second lifespan; (3) verifying both processes share identical create/exit timestamps — this holds but does not contradict the PPID relationship; (4) checking whether netscan could misattribute the connection — the pool tag clearly associates Uninstall.exe/PID 2340 with the 172.16.7.12:135 connection. None of these refutation attempts succeeded in disproving the core claim.",
+        "rationale": "The factual elements (cmd.exe PID 4808 spawned Uninstall.exe PID 2340, 2-second runtime, TCP to 172.16.7.12:135) are all directly supported by psscan and netscan evidence. The \"lateral movement/recon\" label is inferential but reasonable given the RPC endpoint mapper target, cmd.exe parentage, and extremely short execution window. Confidence is 0.85 rather than higher because (a) cmd.exe's parent PID 6956 is missing from psscan, leaving the launch chain incomplete; (b) pslist/cmdline/malfind/svcscan all returned empty, limiting corroboration; and (c) without the binary path or hash, we cannot definitively rule out a legitimate but oddly-behaved uninstaller.",
+        "reviewed_at": "2026-06-06T19:38:16.750948Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:39.083885Z",
+      "updated_at": "2026-06-06T19:38:19.406079Z"
+    },
+    {
+      "id": "4ae6ebf67fb6",
+      "claim": "WMI-based persistence: The initial PowerShell C2 process (PID 4072, powershell.exe) was spawned by WmiPrvSE.exe (PID 1196) on 2018-08-28 22:08:25. WmiPrvSE.exe is the WMI Provider Host, and spawning PowerShell from it is a well-known technique for WMI event subscription persistence (e.g., __EventFilter / __EventConsumer bindings).",
+      "severity": "high",
+      "confidence": 0.75,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1546.003"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.75,
+        "refutation_attempt": "Attempted to refute by: (1) checking whether pslist/pstree corroborate the psscan finding — both returned 0 rows, meaning we rely entirely on pool-scan results; (2) checking cmdline for PowerShell arguments that might reveal benign intent — returned 0 rows; (3) checking svcscan for WMI-related service anomalies — returned 0 rows; (4) checking malfind on both PowerShell PIDs for injection evidence — returned 0 rows; (5) checking netscan for network C2 indicators — DID find suspicious TCP connections to 172.16.4.10:8080 from both PID 4072 (CLOSED) and PID 3164 (CLOSE_WAIT); (6) considering alternative explanations: legitimate WMI administrative scripting, SCCM, or WinRM could also cause WmiPrvSE.exe to spawn PowerShell — cannot rule these out without command-line or WMI repository data.",
+        "rationale": "The factual core — PID 4072 (powershell.exe, PPID 1196/WmiPrvSE.exe, CreateTime 2018-08-28 22:08:25) — is directly supported by psscan. Netscan confirms both PowerShell processes had TCP connections to 172.16.4.10:8080, supporting C2 characterization. However, the specific claim of \"__EventFilter / __EventConsumer bindings\" (WMI event subscription persistence) is not directly evidenced. Multiple plugins (pslist, pstree, cmdline, svcscan, malfind) returned empty results, indicating significant memory structure corruption. The evidence comes from a single memory view (psscan) with no corroborating EPROCESS list data. Alternative explanations for WmiPrvSE spawning PowerShell (legitimate WMI administration, scheduled tasks via WMI, WinRM) cannot be excluded. The persistence mechanism is plausible and consistent with the evidence, but not directly proven.",
+        "reviewed_at": "2026-06-06T19:40:00.415424Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:24:55.479138Z",
+      "updated_at": "2026-06-06T19:40:12.617535Z"
+    },
+    {
+      "id": "228d43e78c61",
+      "claim": "Suspicious ngentask.exe C2 connections: ngentask.exe (PID 7092, parent PID 2536) ran briefly on 2018-09-06 07:27:10–07:27:11 and made two TCP connections to 172.16.4.10:8080 (the shared C2 server). While ngentask.exe is a legitimate .NET NGEN task binary, its use of the C2 channel suggests it was either hijacked or is a renamed malicious binary.",
+      "severity": "medium",
+      "confidence": 0.65,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:22:42.541669Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:22:48.447372Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1571",
+        "T1036.003"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.65,
+        "refutation_attempt": "Attempted to refute by: (1) Checking if parent PID 2536 can be identified — it does not appear in psscan, making the lineage unverifiable. (2) Testing whether the binary can be confirmed as legitimate ngentask.exe vs renamed malware — no dlllist/cmdline/file-path data available; pslist/dlllist/cmdline all returned empty. (3) Checking malfind for injection evidence — returned empty for PID 7092. (4) Examining whether 172.16.4.10:8080 is definitively a C2 server — only powershell connections corroborate this; no protocol/payload evidence. (5) Noting the CLOSED state of both ngentask connections and the 1-second lifespan leave ambiguity about connection timing.",
+        "rationale": "The raw evidence from psscan confirms ngentask.exe (PID 7092, PPID 2536) existed briefly (07:27:10–07:27:11 UTC). Netscan independently confirms two TCPv4 connections from PID 7092 to 172.16.4.10:8080 (CLOSED). However, the C2 interpretation rests on powershell.exe PIDs 3164/4072 also connecting to the same server. No direct evidence confirms the binary is malicious, hijacked, or renamed — malfind, dlllist, and cmdline all returned empty due to the degraded memory state (pslist also empty). The parent PID 2536 is unidentifiable. The connections are CLOSED, providing no timing data to link them precisely to the process's 1-second window. These gaps prevent full confirmation but the correlation with powershell C2 activity makes the inference plausible.",
+        "reviewed_at": "2026-06-06T19:42:25.643133Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-06T19:25:02.268276Z",
+      "updated_at": "2026-06-06T19:42:36.610307Z"
+    },
+    {
+      "id": "3a018022286a",
+      "claim": "ngentask.exe (PID 7092, PPID 2536) established two TCP connections to 172.16.4.10:8080 — the same IP:port used by powershell.exe C2 processes (PIDs 3164 and 4072). The connections are correlated with malicious C2 infrastructure, but no direct evidence confirms the ngentask.exe binary itself was hijacked, replaced, or otherwise tampered with.",
+      "severity": "medium",
+      "confidence": 0.55,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:44:13.593527Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:44:09.941732Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1043",
+        "T1071.001"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.55,
+        "refutation_attempt": "I independently re-ran netscan, psscan, pslist, pstree, cmdline, dlllist, malfind, and svcscan. The two TCP connections from ngentask.exe (PID 7092) to 172.16.4.10:8080 are confirmed in netscan (offsets 918788800 and 1417783168, both CLOSED). The same IP:port is confirmed for powershell.exe PIDs 3164 (CLOSE_WAIT) and 4072 (CLOSED). However, I attempted to disprove the \"malicious C2\" inference by: (1) noting that pslist, cmdline, dlllist, and malfind are all empty on this image — so the characterization of powershell.exe as \"C2\" cannot be independently verified from raw evidence; (2) noting that 172.16.4.10 is on the same internal /24 subnet (172.16.4.5 local), and port 8080 is a common HTTP/alt-HTTP port not intrinsically malicious; (3) macmnsvc.exe (McAfee) listens on adjacent port 8081, suggesting a management/monitoring ecosystem; (4) ngentask.exe lived only 1 second (07:27:10→07:27:11) with PPID 2536 absent from psscan, making its relationship to powershell unclear; (5) no malfind/dlllist evidence exists for any process. The connection facts are solid; the C2-label is plausible but unproven correlation.",
+        "rationale": "The claim contains two layers: factual (connections exist, same IP:port) and interpretive (C2/malicious). The factual layer is directly confirmed by netscan and psscan. The interpretive layer relies on labeling powershell.exe as C2, but with cmdline/dlllist/malfind all returning empty, no raw evidence proves powershell.exe was executing C2 commands — only that it connected to the same IP:port. Alternative explanations (internal web service, monitoring agent, McAfee-adjacent infrastructure on port 8080 near port 8081) cannot be ruled out. The investigator's own 0.65 confidence and admission of no tampering evidence align with this assessment. Confidence 0.55 reflects: connections confirmed (+), IP:port correlation confirmed (+), but C2 label unproven and alternative explanations viable (−).",
+        "reviewed_at": "2026-06-06T19:47:01.140739Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-06T19:44:40.908153Z",
+      "updated_at": "2026-06-06T19:47:12.129029Z"
+    },
+    {
+      "id": "0038d9cf48e2",
+      "claim": "ngentask.exe (PID 7092) established two TCP connections to 172.16.4.10:8080 within its 1-second lifespan — the same destination IP:port contacted by two long-running powershell.exe processes (PIDs 3164 and 4072). powershell.exe PID 4072 was spawned via WMI (parent WmiPrvSE.exe PID 1196); its child powershell.exe PID 3164 spawned approximately 28 short-lived rundll32.exe instances (2–38 seconds each) over 7 days. The destination 172.16.4.10:8080 is contacted exclusively by these three processes. ngentask.exe — a .NET compilation tool — has no legitimate operational reason for outbound HTTP connections. While cmdline and DLL data are unavailable to confirm C2 commands, the aggregate behavioral pattern is highly anomalous and consistent with attacker activity.",
+      "severity": "medium",
+      "confidence": 0.85,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "43647f01f3d9935c300e176c0007188286b609af16ae0db2bc4a82f9511c4506",
+          "output_bytes": 41773,
+          "ran_at": "2026-06-06T19:47:24.936912Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "evidence\\srl-2018-base-file-memory\\extracted\\base-file-memory.img",
+            "--offline",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "b7e9c4731b1c230feb335e48db20e49f51106f579b422a07bb7b54b54bc1ffcd",
+          "output_bytes": 33711,
+          "ran_at": "2026-06-06T19:47:28.538171Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1047",
+        "T1059.001",
+        "T1071.001",
+        "T1218.011",
+        "T1105"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.85,
+        "refutation_attempt": "Attempted to refute by: (1) independently re-running netscan and psscan to verify every connection/process claim; (2) checking whether any other process contacts 172.16.4.10 on any port — none do; (3) attempting pslist/cmdline/pstree/dlllist/malfind to find benign explanations — all EPROCESS-based plugins returned empty, confirming the investigator's statement that cmdline/DLL data is unavailable; (4) searching for ngentask.exe's parent (PPID 2536) in psscan — not present, creating a minor chain-of-custody gap but not refuting the connections; (5) verifying the exact count and timing of rundll32.exe instances — confirmed exactly 28, spanning 2018-08-30 to 2018-09-06, each 2-38 seconds; (6) checking whether 172.16.4.10:8080 connections could be stale pool artifacts (Created=null) — they persist in the pool and are attributable, but exact creation time unknown; (7) verifying evidence integrity — sha256 unchanged.",
+        "rationale": "Every factual sub-claim in the finding is directly supported by raw evidence: (a) ngentask.exe PID 7092 has two CLOSED TCPv4 connections to 172.16.4.10:8080 (LocalPorts 56322, 56324) in netscan; (b) psscan shows its lifespan is exactly 1 second (2018-09-06T07:27:10→07:27:11); (c) powershell.exe PID 3164 (CLOSE_WAIT on LocalPort 56932) and PID 4072 (CLOSED on LocalPort 54794) both connect to the same 172.16.4.10:8080; (d) PID 4072 PPID=1196 (WmiPrvSE.exe) confirms WMI spawning; (e) PID 3164 PPID=4072 confirms parent-child; (f) exactly 28 rundll32.exe entries with PPID=3164 in psscan, spanning Aug 30–Sep 6, with lifespans from 2 to 38 seconds; (g) no other process in the 145-entry netscan contacts 172.16.4.10 on any port. The assessment that ngentask.exe has no legitimate reason for outbound HTTP connections is well-founded (NGEN compiles on-disk assemblies, never fetches over HTTP). The key limitation — empty EPROCESS list preventing cmdline/DLL/injection analysis — is acknowledged by the investigator and does not weaken the confirmed network/process-pool facts. Confidence is 0.85 rather than higher only because Created=null on all four 172.16.4.10:8080 connections and the ngentask.exe parent (PPID 2536) is absent from psscan, leaving minor timeline and ancestry gaps.",
+        "reviewed_at": "2026-06-06T19:52:18.209367Z"
+      },
+      "iteration": 2,
+      "created_at": "2026-06-06T19:49:35.487751Z",
+      "updated_at": "2026-06-06T19:52:28.646058Z"
+    }
+  ],
+  "summary": "4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.",
+  "iterations_run": 2,
+  "generated_at": "2026-06-06T19:52:29.803172Z"
+}

@@ -1,5 +1,21 @@
 # Protocol SIFT++
 
+> **60-second version (for reviewers).** An autonomous Windows-memory DFIR agent
+> that is *forensically defensible*:
+> 1. **It cannot alter evidence** — destructive actions don't exist in its tool
+>    server (`siftpp-spoliation-test`: 14/14 attacks refused, evidence hash unchanged).
+> 2. **It catches its own hallucinations** — a Skeptic agent independently reruns
+>    tools to refute each finding (`confirmed`/`inferred`/`refuted`) and sends weak
+>    ones back for re-investigation.
+> 3. **It keeps a tamper-evident chain of custody** — a hash-chained audit log where
+>    editing any one record is detected (`siftpp-tamper-test`).
+>
+> Real run on a SANS APT memory image: **4 confirmed of 10 findings, 2
+> self-corrections, evidence integrity verified, 302-record audit (hash chain OK).**
+> See the [architecture diagram](docs/architecture.png) and the
+> [real report + logs](docs/examples/). See it with **no API key**:
+> `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
+
 A self-verifying, autonomous DFIR analyst for
 [SANS FIND EVIL! 2026](https://findevil.devpost.com/), built around read-only
 forensic tools, adversarial verification, and tamper-evident audit logs.
@@ -47,6 +63,8 @@ The project is intentionally narrow: one Windows memory case, a curated
 Volatility 3 toolset, strong evidence citations, and a visible correction loop.
 
 ## Architecture
+
+![Protocol SIFT++ architecture](docs/architecture.png)
 
 ```mermaid
 flowchart LR
