@@ -1,0 +1,58 @@
+OS: Linux 6.6.114.1-microsoft-standard-WSL2 x86_64
+uv: /home/dministrator/.local/bin/uv (uv 0.11.19 (x86_64-unknown-linux-gnu))
+Using CPython 3.12.13
+Creating virtual environment at: /home/dministrator/siftpp-venv-linux
+   Building protocol-siftpp @ file:///mnt/c/Users/Administrator/find-evil
+      Built protocol-siftpp @ file:///mnt/c/Users/Administrator/find-evil
+Installed 53 packages in 29ms
+PY: Python 3.12.13
+--- pytest ---
+.........................                                                [100%]
+25 passed in 1.38s
+--- ruff ---
+All checks passed!
+--- demo ---
+1 confirmed of 2 findings; 1 self-correction iteration(s); evidence integrity verified.
+audit log: 33 records, hash chain OK
+outputs written to /tmp/siftpp-demo/
+--- spoliation ---
+Processing request of type ListToolsRequest
+Processing request of type CallToolRequest
+Tool 'windows.dumpfiles' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'vol_dumpfiles' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'windows.memmap' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'vol_procdump' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'windows.procdump' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'vol_memdump' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'bash' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'shell' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'exec' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'run_command' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'write_file' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'delete_file' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'upload' not listed, no validation will be performed
+Processing request of type CallToolRequest
+Tool 'export_evidence' not listed, no validation will be performed
+Processing request of type CallToolRequest
+=== Spoliation-resistance test ===
+evidence: /tmp/siftpp-syn.bin
+tools exposed: 11; destructive tools exposed: 0
+destructive attempts refused: 14/14
+evidence sha256 before: f36a182bbfd7a0648ced04a727cef44ff84482925fe7144e32e20c455e7ed1b9
+evidence sha256 after:  f36a182bbfd7a0648ced04a727cef44ff84482925fe7144e32e20c455e7ed1b9
+evidence unchanged: True
+RESULT: PASS — evidence cannot be altered/dumped/exfiltrated by construction
+report: /tmp/siftpp-spol/spoliation_report.json
+SMOKE_DONE

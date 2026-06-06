@@ -26,15 +26,25 @@ path with:
 uv run <command>
 ```
 
-WSL Ubuntu-22.04 smoke verification was performed with a separate Linux virtual
-environment so it would not collide with the Windows `.venv`:
+Linux / SANS SIFT portability is verified by `tools/linux_smoke.sh`, run on
+Ubuntu 22.04 (WSL2) in a separate Linux virtual environment (so it does not
+collide with the Windows `.venv`):
 
 ```bash
-UV_PROJECT_ENVIRONMENT=.venv-linux uv run pytest
-UV_PROJECT_ENVIRONMENT=.venv-linux uv run ruff check .
+bash tools/linux_smoke.sh
 ```
 
-Both commands passed under CPython 3.12.13.
+Verified result on Ubuntu 22.04, uv-managed CPython 3.12.13
+(captured in `docs/examples/linux-smoke.txt`):
+
+```text
+pytest: 25 passed     ruff: All checks passed
+demo:   1 confirmed of 2 findings; 1 self-correction; integrity verified
+spoliation: 14/14 destructive attempts refused; evidence unchanged; PASS
+```
+
+The real case run itself was performed on Windows; this smoke confirms the code
+path (Python + Volatility 3 + MCP) runs unchanged on Linux/SIFT.
 
 ## Local Replay Demo
 
@@ -151,7 +161,9 @@ Expected:
 
 ## Linux / SIFT Workstation Notes
 
-The code path is Python and Volatility 3 based. On Linux/SIFT:
+The quickest no-key check on Linux/SIFT is `bash tools/linux_smoke.sh` (runs
+pytest + the demo + the spoliation test). For the individual commands, the code
+path is Python and Volatility 3 based. On Linux/SIFT:
 
 ```bash
 export UV_PROJECT_ENVIRONMENT=.venv-linux
