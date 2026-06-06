@@ -70,10 +70,12 @@ class AuditLogger:
 
     def tool_call(self, *, agent: str, tool: str, command: list[str],
                   output_sha256: str, output_bytes: int, duration_ms: int,
-                  exit_code: int = 0, tokens: int | None = None) -> dict[str, Any]:
+                  exit_code: int = 0, tokens: int | None = None,
+                  evidence_sha256: str | None = None) -> dict[str, Any]:
         return self.log("tool_call", agent=agent, tool=tool, command=command,
                         output_sha256=output_sha256, output_bytes=output_bytes,
-                        duration_ms=duration_ms, exit_code=exit_code, tokens=tokens)
+                        duration_ms=duration_ms, exit_code=exit_code, tokens=tokens,
+                        evidence_sha256=evidence_sha256)
 
     def agent_message(self, *, sender: str, recipient: str, summary: str,
                       tokens: int | None = None) -> dict[str, Any]:

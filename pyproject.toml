@@ -9,7 +9,11 @@ authors = [{ name = "Protocol SIFT++ contributors" }]
 dependencies = [
     "mcp>=1.0",
     "pydantic>=2.7",
+    "volatility3>=2.28.0",
 ]
+
+[project.scripts]
+siftpp-mcp = "protocol_siftpp.mcp_server.server:main"
 
 [dependency-groups]
 dev = [
