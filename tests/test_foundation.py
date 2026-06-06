@@ -44,8 +44,10 @@ def test_needs_reinvestigation_on_refute_or_low_confidence():
     f.status = FindingStatus.refuted
     assert f.needs_reinvestigation()
     f.status = FindingStatus.inferred
-    f.confidence = 0.3
+    f.confidence = 0.69
     assert f.needs_reinvestigation()
+    f.confidence = 0.70
+    assert not f.needs_reinvestigation()
 
 
 def test_skeptic_review_confidence_bounds():

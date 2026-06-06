@@ -31,6 +31,8 @@ generic shell or arbitrary command runner.
 
 - Only tool names in `READ_ONLY_PLUGINS` can execute.
 - The runner builds argv as a list and never invokes a shell.
+- Volatility child processes run with `stdin=subprocess.DEVNULL`, so they cannot
+  read from or block the MCP stdio transport.
 - Dumping or write-oriented plugins are absent from the registry.
 - No output directory flag is passed to Volatility.
 - The evidence file is checked before and after every tool call.

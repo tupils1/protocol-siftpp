@@ -2,11 +2,41 @@
 
 Protocol SIFT++ has two run paths:
 
-1. A deterministic local replay demo that needs no API key and no forensic image.
-2. The real investigation path for a Windows memory image using Volatility 3 and
-   the Anthropic API.
+1. A deterministic replay demo that needs no API key and no forensic image.
+2. The real investigation path for the selected SANS memory image.
 
-## Local replay demo
+## Prerequisites
+
+- Python 3.11+.
+- `uv`.
+- Network access for the first dependency install and case download.
+- `DEEPSEEK_API_KEY` or `ANTHROPIC_API_KEY` for the real agent run.
+
+On Windows, this project was verified with:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run pytest
+C:\Users\Administrator\.local\bin\uv.exe run ruff check .
+```
+
+On Linux or SANS SIFT Workstation, install `uv` and replace the Windows `uv`
+path with:
+
+```bash
+uv run <command>
+```
+
+WSL Ubuntu-22.04 smoke verification was performed with a separate Linux virtual
+environment so it would not collide with the Windows `.venv`:
+
+```bash
+UV_PROJECT_ENVIRONMENT=.venv-linux uv run pytest
+UV_PROJECT_ENVIRONMENT=.venv-linux uv run ruff check .
+```
+
+Both commands passed under CPython 3.12.13.
+
+## Local Replay Demo
 
 Run this first to verify the self-correction loop, report writer, and
 tamper-evident audit log:
@@ -32,17 +62,10 @@ Generated files:
 
 The replay demo intentionally starts with an over-claimed injected-code finding.
 The Skeptic refutes it, the Investigator re-investigates, and the final report
-contains a narrower confirmed finding. This proves the autonomous
-self-correction loop, but it is not the final SANS case-data run.
+contains a narrower confirmed finding. This proves the loop without using a
+paid model or real evidence.
 
-## Real memory-image run
-
-Prerequisites:
-
-- Python 3.11+ with `uv`.
-- Volatility 3 installed through this project environment.
-- `DEEPSEEK_API_KEY` or `ANTHROPIC_API_KEY` set in the environment.
-- A Windows memory image from the SANS sample set.
+## Real Memory-Image Run
 
 Download the selected SANS case:
 
@@ -50,17 +73,28 @@ Download the selected SANS case:
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
 ```
 
-Use one of the printed `candidate evidence:` paths as `--evidence`.
-For the selected case, the expected path is:
+Expected evidence path:
 
 ```text
 evidence\srl-2018-base-file-memory\extracted\base-file-memory.img
 ```
 
-Run:
+Set credentials. Either export an environment variable:
 
 ```powershell
 $env:DEEPSEEK_API_KEY = "<your key>"
+```
+
+or create a local `.env` file that is not committed:
+
+```text
+DEEPSEEK_API_KEY=<your key>
+SIFTPP_LLM_PROVIDER=deepseek
+```
+
+Run:
+
+```powershell
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
@@ -68,6 +102,14 @@ C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
   --case-id srl-2018-base-file-memory `
   --offline `
   --max-iterations 3
+```
+
+Expected final result from the submitted run:
+
+```text
+4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.
+audit log: 302 records, hash chain OK
+outputs written to analysis\srl-2018-base-file-memory/
 ```
 
 Outputs:
@@ -84,5 +126,31 @@ C:\Users\Administrator\.local\bin\uv.exe run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 
-The final Devpost demo video should use the real SANS case data, not the replay
-demo.
+Expected:
+
+```text
+(True, 302)
+```
+
+## Linux / SIFT Workstation Notes
+
+The code path is Python and Volatility 3 based. On Linux/SIFT:
+
+```bash
+export UV_PROJECT_ENVIRONMENT=.venv-linux
+uv sync
+uv run pytest
+uv run ruff check .
+uv run siftpp-demo
+uv run siftpp-download-case
+uv run siftpp-investigate \
+  --provider deepseek \
+  --evidence evidence/srl-2018-base-file-memory/extracted/base-file-memory.img \
+  --out analysis/srl-2018-base-file-memory \
+  --case-id srl-2018-base-file-memory \
+  --offline \
+  --max-iterations 3
+```
+
+The final Devpost demo video should use the real SANS case data, not only the
+replay demo.

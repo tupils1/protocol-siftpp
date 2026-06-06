@@ -165,7 +165,12 @@ class VolatilityRunner:
         self.guard.assert_unchanged()  # before
         started = time.monotonic()
         try:
-            proc = subprocess.run(argv, capture_output=True, timeout=self.timeout_s)
+            proc = subprocess.run(
+                argv,
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                timeout=self.timeout_s,
+            )
             timed_out = False
             stdout = proc.stdout or b""
             stderr = proc.stderr or b""

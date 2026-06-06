@@ -42,6 +42,9 @@ class FindingStatus(str, Enum):
     refuted = "refuted"      # contradicted / unsupported -> drop or re-investigate
 
 
+INFERRED_REINVESTIGATION_THRESHOLD = 0.70
+
+
 class Evidence(BaseModel):
     """A single read-only tool execution cited in support of a finding."""
 
@@ -86,8 +89,13 @@ class Finding(BaseModel):
         return [t.strip().upper() for t in v if t.strip()]
 
     def needs_reinvestigation(self) -> bool:
-        """A refuted or low-confidence finding re-enters the Investigator."""
+        """A refuted or weakly inferred finding re-enters the Investigator."""
         if self.status == FindingStatus.refuted:
+            return True
+        if (
+            self.status == FindingStatus.inferred
+            and self.confidence < INFERRED_REINVESTIGATION_THRESHOLD
+        ):
             return True
         return self.confidence < 0.5
 

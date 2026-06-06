@@ -24,11 +24,17 @@ def _make_runner(tmp_path, monkeypatch, stdout=b"[]", returncode=0, stderr=b""):
     guard = V.EvidenceGuard.open(evidence)
     runner = V.VolatilityRunner(guard=guard, audit=audit, agent="investigator")
     monkeypatch.setattr(V, "vol_executable", lambda: "vol")
+    calls = []
+
+    def fake_run(argv, **kw):
+        calls.append((argv, kw))
+        return subprocess.CompletedProcess(argv, returncode, stdout, stderr)
+
     monkeypatch.setattr(
         V.subprocess, "run",
-        lambda argv, **kw: subprocess.CompletedProcess(argv, returncode, stdout, stderr),
+        fake_run,
     )
-    return runner, evidence, audit
+    return runner, evidence, audit, calls
 
 
 def test_registry_is_read_only_only():
@@ -41,7 +47,7 @@ def test_registry_is_read_only_only():
 
 
 def test_run_builds_safe_argv_and_hashes_full_output(tmp_path, monkeypatch):
-    runner, evidence, _ = _make_runner(tmp_path, monkeypatch, stdout=b'[{"PID": 4}]')
+    runner, evidence, _, calls = _make_runner(tmp_path, monkeypatch, stdout=b'[{"PID": 4}]')
     res = runner.run("vol_pslist")
     argv = res["command"]
     assert argv[0] == "vol"
@@ -52,6 +58,7 @@ def test_run_builds_safe_argv_and_hashes_full_output(tmp_path, monkeypatch):
     assert res["output_sha256"] == sha256_hex(b'[{"PID": 4}]')
     assert res["result"] == [{"PID": 4}]
     assert res["evidence_sha256"] == sha256_hex(b"FAKEMEMORY" * 100)
+    assert calls[0][1]["stdin"] is subprocess.DEVNULL
 
     ok, _ = verify_chain(tmp_path / "audit.jsonl")
     assert ok
@@ -78,7 +85,7 @@ def test_pid_validation(tmp_path, monkeypatch):
 
 
 def test_evidence_integrity_guard_trips_on_tamper(tmp_path, monkeypatch):
-    runner, evidence, _ = _make_runner(tmp_path, monkeypatch)
+    runner, evidence, _, _ = _make_runner(tmp_path, monkeypatch)
     evidence.write_bytes(b"TAMPERED")  # change the image after acquisition
     with pytest.raises(V.IntegrityError):
         runner.run("vol_pslist")

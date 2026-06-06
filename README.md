@@ -1,74 +1,137 @@
-# Protocol SIFT++ — a self-verifying, autonomous DFIR analyst
+# Protocol SIFT++
 
-*A submission for [SANS FIND EVIL! 2026](https://findevil.devpost.com/) — the first hackathon for autonomous incident response.*
-*Built on top of [Protocol SIFT](https://github.com/teamdfir/protocol-sift) and the SANS SIFT Workstation.*
+A self-verifying, autonomous DFIR analyst for
+[SANS FIND EVIL! 2026](https://findevil.devpost.com/), built around read-only
+forensic tools, adversarial verification, and tamper-evident audit logs.
 
-## The gap we close
+Protocol SIFT++ builds on the Protocol SIFT idea and adds the missing accuracy
+loop: an Investigator proposes findings, a Skeptic independently tries to
+refute them, and weak findings are sent back for automatic reinvestigation.
 
-AI-assisted attackers breach in minutes. The two strongest existing autonomous-IR prototypes each leave half the problem open:
+## Final Case Run
 
-- **Protocol SIFT** (the official baseline) runs autonomously but has **no built-in accuracy check** — it can assert a finding the evidence doesn't actually support.
-- **Valhuntir** (the official reference) is rigorous but **gates every finding behind a human approval** — it is *assisted*, not autonomous, and its own docs warn it "will more than likely hallucinate" if simply told to *find evil*.
+Selected SANS sample:
 
-FIND EVIL!'s top two judging criteria are exactly this pair: **autonomous execution with real-time self-correction**, and **IR accuracy / catching its own hallucinations**. Protocol SIFT++ targets both head-on.
+```text
+SRL-2018 Compromised Enterprise Network / base-file-memory.7z
+```
 
-## How it works
+Final DeepSeek run on the extracted memory image:
 
-An adversarial, self-verifying multi-agent loop layered onto Protocol SIFT:
+```text
+4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.
+audit log: 302 records, hash chain OK
+```
 
-- **Investigator** — reasons like a senior DFIR analyst: sequences forensic tools, forms findings.
-- **Skeptic (Verifier)** — independently tries to *refute* each finding against the raw tool output, separating **confirmed** findings from **inferences**, and flagging or dropping hallucinations.
-- **Self-correction loop** — a refuted finding sends the Investigator back to re-investigate and adjust its approach (the behaviour the rubric weights highest).
-- **Read-only MCP server** — every forensic tool is exposed through a custom MCP server that contains *only* read-only operations, so the agent is *architecturally* incapable of altering evidence. No spoliation is possible — a guardrail enforced by design, not by prompt.
-- **Cited, confidence-scored findings** — each finding carries a confidence level and a citation to the exact tool execution (command + output hash) that supports it, written to a structured, append-only audit log.
+The key corrected finding involved `ngentask.exe`: the Investigator initially
+overstated the malware attribution, the Skeptic downgraded it twice, and the
+system converged on a narrower confirmed behavioral claim tied to `psscan` and
+`netscan` evidence.
 
-## Status
+## Why It Matters
 
-🚧 Under active development for the **June 15, 2026** deadline. See [DESIGN.md](DESIGN.md) for the architecture, the verification protocol, and how each component maps to the judging criteria.
+AI-assisted attackers can move quickly, but autonomous responders can also
+hallucinate. Protocol SIFT++ targets both of FIND EVIL!'s top scoring areas:
 
-## Local smoke demo
+- Autonomous execution with real-time self-correction.
+- IR accuracy and hallucination catching.
 
-Run the deterministic self-correction demo without API keys or a forensic image:
+The project is intentionally narrow: one Windows memory case, a curated
+Volatility 3 toolset, strong evidence citations, and a visible correction loop.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  E["Evidence image"] --> G["EvidenceGuard: sha256, size, mtime"]
+  G --> M["Read-only MCP server"]
+  M --> V["Volatility 3 allowlist"]
+  V --> T["Tool output"]
+
+  O["Orchestrator"] --> I["Investigator"]
+  O --> S["Skeptic"]
+  I --> M
+  S --> M
+  I --> F["Draft findings"]
+  F --> S
+  S --> R["confirmed / inferred / refuted"]
+  R -->|weak or refuted| I
+
+  O --> A["Audit JSONL hash chain"]
+  O --> P["report.md + report.json"]
+```
+
+The agents never receive a generic shell. The MCP server exposes only curated
+read-only Volatility tools and checks evidence integrity around every tool call.
+
+## Quick Start
+
+Install dependencies with `uv`, then run the deterministic local demo:
 
 ```powershell
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
 ```
 
-It writes `analysis/demo/report.md`, `analysis/demo/report.json`, and
-`analysis/demo/audit.jsonl`. The demo intentionally starts with an over-claimed
-injection finding, has the Skeptic refute it, then re-investigates and replaces
-it with a narrower evidence-backed finding. This is only a development replay;
-the final submission still needs a run on the SANS sample case data.
-
-## Selected SANS case
-
-Primary target case: `SRL-2018 Compromised Enterprise Network /
-base-file-memory.7z` from the official FIND EVIL! starter case folder. Download
-and extract it with:
+Download the selected SANS case:
 
 ```powershell
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
 ```
 
-The real investigation path supports Anthropic or DeepSeek. For DeepSeek:
+Run the real investigation with DeepSeek:
 
 ```powershell
-$env:DEEPSEEK_API_KEY = "<your key>"
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
   --out analysis\srl-2018-base-file-memory `
   --case-id srl-2018-base-file-memory `
-  --offline
+  --offline `
+  --max-iterations 3
 ```
 
-## Deliverable drafts
+Set `DEEPSEEK_API_KEY` in the environment or an ignored local `.env` file. Do
+not commit API keys.
+
+## Outputs
+
+The real run writes:
+
+- `analysis/srl-2018-base-file-memory/report.md`
+- `analysis/srl-2018-base-file-memory/report.json`
+- `analysis/srl-2018-base-file-memory/audit.jsonl`
+- `analysis/srl-2018-base-file-memory/mcp-server.jsonl`
+
+Verify the audit chain:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run python -c `
+  "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
+```
+
+Expected:
+
+```text
+(True, 302)
+```
+
+## Deliverables
 
 - [Try-it-out instructions](docs/TRY_IT_OUT.md)
 - [Architecture and security boundary](docs/ARCHITECTURE.md)
-- [Dataset documentation template](docs/DATASET.md)
-- [Accuracy and integrity report template](docs/ACCURACY_REPORT.md)
+- [Dataset documentation](docs/DATASET.md)
+- [Accuracy and integrity report](docs/ACCURACY_REPORT.md)
 - [5-minute demo script](docs/DEMO_SCRIPT.md)
+- [Agent execution log summary](docs/RUN_LOGS.md)
+- [Devpost story draft](docs/DEVPOST_STORY.md)
+- [Submission checklist](docs/SUBMISSION_CHECKLIST.md)
+
+## Development Checks
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run pytest
+C:\Users\Administrator\.local\bin\uv.exe run ruff check .
+```
 
 ## License
 
