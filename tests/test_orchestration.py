@@ -107,6 +107,7 @@ def test_confirmed_finding_happy_path(tmp_path):
     assert len(f.evidence) == 1 and f.evidence[0].tool == "vol_pslist"
     assert f.evidence[0].output_sha256 == "a" * 64
     assert len(report.confirmed()) == 1
+    assert report.iterations_run == 0
 
     ok, _ = verify_chain(tmp_path / "audit.jsonl")
     assert ok

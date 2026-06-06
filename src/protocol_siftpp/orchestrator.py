@@ -13,13 +13,12 @@ from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable
 
 from .agent_config import (
+    ANTHROPIC_MODEL,
     DEFAULT_MAX_ITERATIONS,
     MAX_TOKENS,
     MAX_TOOL_RESULT_CHARS,
     MAX_TURNS_PER_AGENT,
-    MODEL,
-    OUTPUT_CONFIG,
-    THINKING,
+    message_options,
 )
 from .audit import AuditLogger
 from .client_tools import SUBMIT_FINDING_TOOL, SUBMIT_REVIEW_TOOL
@@ -52,18 +51,19 @@ async def _agent_loop(
     audit: AuditLogger,
     agent: str,
     execute_tool: ToolExecutor,
+    model: str,
+    model_kwargs: dict[str, Any],
     max_turns: int = MAX_TURNS_PER_AGENT,
 ) -> None:
     """Manual agentic tool-use loop for one agent activation."""
     for _ in range(max_turns):
         resp = await client.messages.create(
-            model=MODEL,
+            model=model,
             max_tokens=MAX_TOKENS,
             system=system,
-            thinking=THINKING,
-            output_config=OUTPUT_CONFIG,
             tools=tools,
             messages=messages,
+            **model_kwargs,
         )
         u = resp.usage
         audit.log(
@@ -108,11 +108,15 @@ class Orchestrator:
         audit: AuditLogger,
         *,
         max_iterations: int = DEFAULT_MAX_ITERATIONS,
+        model: str = ANTHROPIC_MODEL,
+        model_kwargs: dict[str, Any] | None = None,
     ):
         self.client = anthropic_client
         self.mcp = mcp
         self.audit = audit
         self.max_iterations = max_iterations
+        self.model = model
+        self.model_kwargs = model_kwargs if model_kwargs is not None else message_options("anthropic")
         self.findings: list[Finding] = []
         self.evidence_by_tool: dict[str, list[Evidence]] = {}
         self._agent = "investigator"
@@ -197,6 +201,8 @@ class Orchestrator:
             audit=self.audit,
             agent="investigator",
             execute_tool=execute,
+            model=self.model,
+            model_kwargs=self.model_kwargs,
         )
 
     async def _review(self, finding: Finding) -> None:
@@ -233,6 +239,8 @@ class Orchestrator:
             audit=self.audit,
             agent="skeptic",
             execute_tool=execute,
+            model=self.model,
+            model_kwargs=self.model_kwargs,
         )
 
         review = holder.get("review")
@@ -268,8 +276,8 @@ class Orchestrator:
 
         await self._investigate(INITIAL_INSTRUCTION, iteration=0)
 
-        iterations_run = 0
-        for it in range(1, self.max_iterations + 1):
+        corrections_run = 0
+        for review_round in range(1, self.max_iterations + 1):
             pending = [f for f in self.findings if f.review is None]
             if not pending:
                 break
@@ -278,13 +286,14 @@ class Orchestrator:
                 await self._review(f)
                 if f.needs_reinvestigation():
                     redo.append(f)
-            iterations_run = it
-            if not redo or it == self.max_iterations:
+            if not redo or review_round == self.max_iterations:
                 break
+            corrections_run += 1
             self.audit.iteration(
-                n=it, reason=f"{len(redo)} finding(s) refuted/low-confidence -> re-investigate"
+                n=corrections_run,
+                reason=f"{len(redo)} finding(s) refuted/low-confidence -> re-investigate",
             )
-            await self._investigate(render_reinvestigation(redo), iteration=it)
+            await self._investigate(render_reinvestigation(redo), iteration=corrections_run)
 
         # Review any findings produced in the final iteration.
         for f in [f for f in self.findings if f.review is None]:
@@ -304,10 +313,10 @@ class Orchestrator:
             evidence_path=evidence_path,
             evidence_sha256=evidence_sha,
             findings=self.findings,
-            iterations_run=iterations_run,
+            iterations_run=corrections_run,
             summary=(
                 f"{len(confirmed)} confirmed of {len(self.findings)} findings; "
-                f"{iterations_run} self-correction iteration(s); "
+                f"{corrections_run} self-correction iteration(s); "
                 f"evidence integrity {'verified' if integrity.get('unchanged') else 'FAILED'}."
             ),
         )

@@ -18,6 +18,12 @@ from pathlib import Path
 from anthropic import AsyncAnthropic
 from mcp import StdioServerParameters
 
+from .agent_config import (
+    DEEPSEEK_ANTHROPIC_BASE_URL,
+    default_model,
+    message_options,
+    normalize_provider,
+)
 from .audit import AuditLogger, verify_chain
 from .mcp_client import McpForensics
 from .orchestrator import Orchestrator
@@ -37,6 +43,19 @@ def _server_params(evidence: Path, server_audit: Path, offline: bool) -> StdioSe
         args=["-m", "protocol_siftpp.mcp_server.server"],
         env=env,
     )
+
+
+def _llm_client(provider_name: str) -> AsyncAnthropic:
+    provider = normalize_provider(provider_name)
+    if provider == "deepseek":
+        api_key = os.environ.get("DEEPSEEK_API_KEY")
+        if not api_key:
+            raise SystemExit("Set DEEPSEEK_API_KEY or use --provider anthropic")
+        return AsyncAnthropic(
+            api_key=api_key,
+            base_url=os.environ.get("DEEPSEEK_ANTHROPIC_BASE_URL", DEEPSEEK_ANTHROPIC_BASE_URL),
+        )
+    return AsyncAnthropic()
 
 
 def render_markdown(report: CaseReport) -> str:
@@ -78,10 +97,19 @@ async def _run(args: argparse.Namespace) -> None:
 
     audit = AuditLogger(out / "audit.jsonl")
     params = _server_params(evidence, out / "mcp-server.jsonl", args.offline)
-    client = AsyncAnthropic()
+    provider = normalize_provider(args.provider)
+    model = args.model or default_model(provider)
+    client = _llm_client(provider)
 
     async with McpForensics(params) as mcp:
-        orch = Orchestrator(client, mcp, audit, max_iterations=args.max_iterations)
+        orch = Orchestrator(
+            client,
+            mcp,
+            audit,
+            max_iterations=args.max_iterations,
+            model=model,
+            model_kwargs=message_options(provider),
+        )
         report = await orch.run(case_id=case_id)
 
     (out / "report.json").write_text(report.model_dump_json(indent=2), encoding="utf-8")
@@ -102,6 +130,13 @@ def main() -> None:
     p.add_argument("--case-id", help="Case identifier")
     p.add_argument("--max-iterations", type=int, default=3, help="Self-correction rounds")
     p.add_argument("--offline", action="store_true", help="No Volatility symbol downloads")
+    p.add_argument(
+        "--provider",
+        default=os.environ.get("SIFTPP_LLM_PROVIDER", "anthropic"),
+        choices=["anthropic", "deepseek"],
+        help="LLM provider (default: env SIFTPP_LLM_PROVIDER or anthropic)",
+    )
+    p.add_argument("--model", help="Override model name (default depends on provider)")
     asyncio.run(_run(p.parse_args()))
 
 

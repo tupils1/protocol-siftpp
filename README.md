@@ -26,6 +26,50 @@ An adversarial, self-verifying multi-agent loop layered onto Protocol SIFT:
 
 🚧 Under active development for the **June 15, 2026** deadline. See [DESIGN.md](DESIGN.md) for the architecture, the verification protocol, and how each component maps to the judging criteria.
 
+## Local smoke demo
+
+Run the deterministic self-correction demo without API keys or a forensic image:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
+```
+
+It writes `analysis/demo/report.md`, `analysis/demo/report.json`, and
+`analysis/demo/audit.jsonl`. The demo intentionally starts with an over-claimed
+injection finding, has the Skeptic refute it, then re-investigates and replaces
+it with a narrower evidence-backed finding. This is only a development replay;
+the final submission still needs a run on the SANS sample case data.
+
+## Selected SANS case
+
+Primary target case: `SRL-2018 Compromised Enterprise Network /
+base-file-memory.7z` from the official FIND EVIL! starter case folder. Download
+and extract it with:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
+```
+
+The real investigation path supports Anthropic or DeepSeek. For DeepSeek:
+
+```powershell
+$env:DEEPSEEK_API_KEY = "<your key>"
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
+  --provider deepseek `
+  --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
+  --out analysis\srl-2018-base-file-memory `
+  --case-id srl-2018-base-file-memory `
+  --offline
+```
+
+## Deliverable drafts
+
+- [Try-it-out instructions](docs/TRY_IT_OUT.md)
+- [Architecture and security boundary](docs/ARCHITECTURE.md)
+- [Dataset documentation template](docs/DATASET.md)
+- [Accuracy and integrity report template](docs/ACCURACY_REPORT.md)
+- [5-minute demo script](docs/DEMO_SCRIPT.md)
+
 ## License
 
 [MIT](LICENSE).
