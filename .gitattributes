@@ -1,0 +1,14 @@
+# Normalize line endings: keep LF in the repo, even on Windows.
+* text=auto eol=lf
+
+# Treat forensic / binary artifacts as binary (never normalized or diffed).
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.raw binary
+*.mem binary
+*.vmem binary
+*.dd binary
+*.img binary
+*.E01 binary
