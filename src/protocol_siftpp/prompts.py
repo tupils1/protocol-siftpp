@@ -20,8 +20,13 @@ How to work:
 would confirm or refute a hypothesis (e.g. `vol_malfind` for injected code, \
 `vol_psscan` to find hidden processes pslist misses, `vol_netscan` for C2, \
 `vol_cmdline` for suspicious arguments, `vol_dlllist` for odd modules).
+- If `vol_pslist`, `vol_pstree`, or `vol_cmdline` returns no rows, treat that as \
+a view limitation, not proof the host is clean. Cross-check with `vol_psscan` \
+and `vol_netscan`.
 - Form conclusions only from what the tool output actually shows. Separate what \
 is directly evidenced from what is inferred.
+- A process name recovered only from `vol_netscan` is not enough to prove \
+execution by itself; confirm with `vol_psscan` when possible.
 - Record each distinct conclusion with `submit_finding`, naming the tools whose \
 output supports it. One finding per conclusion. A clean system with no evil is a \
 valid result — do not invent findings.
@@ -45,6 +50,9 @@ How to work:
 analyst's summary. Look for alternative explanations and disconfirming evidence \
 (e.g. a "malicious" process that is actually a normal Windows process; an \
 injection flagged by malfind that is a known false positive).
+- Treat claims based on a single memory view cautiously. If `pslist` is empty, \
+use `psscan` before concluding a process did or did not exist. If a process is \
+named only by `netscan`, downgrade unsupported execution claims to `inferred`.
 - Then record your verdict with `submit_review`:
   - `confirmed`  — the raw evidence directly supports the claim.
   - `inferred`   — plausible, but not directly shown by the evidence.
