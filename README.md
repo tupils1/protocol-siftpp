@@ -8,6 +8,13 @@ Protocol SIFT++ builds on the Protocol SIFT idea and adds the missing accuracy
 loop: an Investigator proposes findings, a Skeptic independently tries to
 refute them, and weak findings are sent back for automatic reinvestigation.
 
+What makes it different from a typical "AI finds evil" agent: **every safety claim
+is provable by attacking it.** The agent is architecturally incapable of altering
+evidence (14/14 destructive attempts refused, evidence SHA-256 unchanged), its
+audit log is tamper-evident (edit one record and `verify_chain` fails), and every
+finding cites the exact tool command plus its output hash. Forensic defensibility,
+not a prompt that says "be careful."
+
 ## Final Case Run
 
 Selected SANS sample:
@@ -70,6 +77,13 @@ Install dependencies with `uv`, then run the deterministic local demo:
 
 ```powershell
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
+```
+
+Prove the forensic guardrails by attacking them (no key needed):
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
 ```
 
 Download the selected SANS case:

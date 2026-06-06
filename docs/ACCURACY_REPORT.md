@@ -158,18 +158,52 @@ not cover:
 These misses are acceptable for a depth-focused demo, but they should be called
 out as future-work coverage gaps.
 
-## Evidence Integrity / Spoliation Test
+## Evidence Integrity, Spoliation Resistance, and Tamper-Evidence
 
-Protocol SIFT++ is designed so the agent cannot alter evidence:
+Protocol SIFT++ is forensically defensible by construction, and each property is
+backed by a reproducible automated test (no API key required) — not just a design
+claim.
 
-- No generic command execution is exposed.
-- No dumping/write plugins are registered.
-- Volatility child processes run with `stdin=subprocess.DEVNULL` so they cannot
-  interfere with the MCP stdio channel.
-- Evidence size and mtime are checked around every Volatility call.
-- Full-file SHA-256 is verified at the end.
+### 1. Spoliation resistance — the agent cannot alter, dump, or exfiltrate evidence
 
-Final run values:
+`siftpp-spoliation-test` connects to the live read-only MCP server and attempts,
+exactly as a prompt-injected or malicious agent would, to dump processes,
+write/delete files, run a shell, and exfiltrate. None of those capabilities are
+registered, so every attempt is refused and the evidence is byte-identical before
+and after. Result on the real SANS image:
+
+```text
+tools exposed: 11; destructive tools exposed: 0
+destructive attempts refused: 14/14
+evidence sha256 before: 4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
+evidence sha256 after:  4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
+evidence unchanged: True
+RESULT: PASS - evidence cannot be altered/dumped/exfiltrated by construction
+```
+
+The guarantee is architectural: no generic command runner, no dump/write plugin,
+and no network/upload tool exists in the server. Volatility child processes also
+run with `stdin=subprocess.DEVNULL`, and evidence size + mtime are checked around
+every call. Full machine-readable report: `analysis/spoliation/spoliation_report.json`.
+
+### 2. Tamper-evident chain of custody — any edit to the audit log is detected
+
+The append-only audit log hash-chains each record into the previous one.
+`siftpp-tamper-test` verifies the real 302-record log, then alters one historical
+record in a copy and re-verifies:
+
+```text
+original audit: analysis/srl-2018-base-file-memory/audit.jsonl
+  verify_chain -> (True, 302)
+tampered record #152 of 302 (was a tool_call for vol_cmdline)
+  verify_chain -> (False, 152)
+RESULT: PASS - tampering detected at record 152
+```
+
+Every finding additionally cites the exact tool command plus the SHA-256 of its
+full output, so the report traces back to specific, hash-verified executions.
+
+### 3. Final-run integrity values
 
 ```text
 sha256_before: 4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
@@ -177,6 +211,8 @@ sha256_after:  4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
 unchanged: true
 audit_verify_chain: OK, 302 records
 ```
+
+Both tests are part of the suite (`tests/test_spoliation.py`, `tests/test_tamper.py`).
 
 ## Baseline Comparison
 

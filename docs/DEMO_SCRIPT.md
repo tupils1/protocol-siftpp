@@ -99,24 +99,48 @@ made two connections to the same 172.16.4.10:8080 destination contacted by the
 PowerShell chain.
 ```
 
-## 3:45-4:30 Show The Guardrail
+## 3:45-4:30 Attack It Live (strongest segment)
 
-Open `src/protocol_siftpp/mcp_server/volatility.py`.
+Don't just describe the guardrail — try to break it on camera.
 
-Show:
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
+```
 
-- `READ_ONLY_PLUGINS`
-- no generic command runner
-- no dump/write plugins
-- fixed argv list
-- `stdin=subprocess.DEVNULL`
-- evidence integrity checks before and after tool calls
+Expected:
+
+```text
+tools exposed: 11; destructive tools exposed: 0
+destructive attempts refused: 14/14
+evidence sha256 before/after identical
+RESULT: PASS - evidence cannot be altered/dumped/exfiltrated by construction
+```
+
+Then prove the chain of custody is tamper-evident:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
+```
+
+Expected:
+
+```text
+verify_chain -> (True, 302)
+... tamper one record ...
+verify_chain -> (False, 152)
+RESULT: PASS - tampering detected at record 152
+```
+
+Optionally show `READ_ONLY_PLUGINS` and `stdin=subprocess.DEVNULL` in
+`src/protocol_siftpp/mcp_server/volatility.py`.
 
 Narration:
 
 ```text
-The agent cannot be prompted into dumping, editing, deleting, or uploading
-evidence because those capabilities are absent from the MCP server.
+I just tried to make the agent dump, delete, and exfiltrate the evidence - all
+fourteen attempts failed, because those capabilities do not exist in the server.
+Then I edited one line of the audit log and the hash chain caught it instantly.
+This is forensic defensibility you can verify, not a prompt that says be careful.
 ```
 
 ## 4:30-5:00 Close

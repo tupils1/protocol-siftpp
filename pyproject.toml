@@ -17,6 +17,8 @@ dependencies = [
 [project.scripts]
 siftpp-mcp = "protocol_siftpp.mcp_server.server:main"
 siftpp-investigate = "protocol_siftpp.cli:main"
+siftpp-spoliation-test = "protocol_siftpp.spoliation_test:main"
+siftpp-tamper-test = "protocol_siftpp.tamper_test:main"
 siftpp-demo = "protocol_siftpp.demo:main"
 siftpp-download-case = "protocol_siftpp.sample_case:main"
 

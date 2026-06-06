@@ -61,9 +61,26 @@ Generated files:
 - `analysis/demo/demo-memory.raw`
 
 The replay demo intentionally starts with an over-claimed injected-code finding.
-The Skeptic refutes it, the Investigator re-investigates, and the final report
-contains a narrower confirmed finding. This proves the loop without using a
-paid model or real evidence.
+The Skeptic refutes it (a caught-and-dropped false positive), the Investigator
+re-investigates, and the final report contains a narrower confirmed finding. This
+proves the self-correction loop without a paid model or real evidence.
+
+## Forensic-Defensibility Proofs (no key)
+
+Two reproducible tests prove the safety properties by attacking them:
+
+```powershell
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
+C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
+```
+
+- `siftpp-spoliation-test` throws 14 destructive operations (dump, write, delete,
+  shell, exfiltrate) at the live MCP server; all are refused and the evidence
+  SHA-256 is identical before and after.
+- `siftpp-tamper-test` edits one record in the audit log and shows `verify_chain`
+  detects the break at that exact record.
+
+Both run on the real SANS artifacts when present, otherwise on a synthetic file.
 
 ## Real Memory-Image Run
 

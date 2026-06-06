@@ -2,11 +2,14 @@
 
 ## Inspiration
 
-Autonomous incident response has a trust problem. A responder agent that moves
-fast but hallucinates can waste analyst time or, worse, contaminate an
-investigation. Protocol SIFT++ was built to test a narrower idea: an autonomous
-DFIR agent should not only find suspicious artifacts, it should also try to
-disprove its own conclusions before reporting them.
+Autonomous incident response has a trust problem — and in forensics, "trust" has
+a precise meaning: would this hold up under scrutiny? An agent that moves fast but
+can hallucinate findings, or that could accidentally modify the evidence it
+touches, is worse than no agent — it contaminates both the investigation and the
+chain of custody. So we asked a sharper question than "can an agent find evil?":
+can an autonomous DFIR agent be made forensically **defensible** — architecturally
+incapable of altering evidence, adversarially self-verifying, and producing a
+tamper-evident trail — not merely fast?
 
 ## What It Does
 
@@ -29,6 +32,23 @@ reinvestigated, the Skeptic downgraded it again, and the system finally
 converged on a narrower confirmed behavioral claim: `ngentask.exe` lived for
 one second and made two connections to the same `172.16.4.10:8080` destination
 used by the suspicious PowerShell chain.
+
+## Why It Is Defensible (and We Can Prove It)
+
+Three properties, each backed by a reproducible test, not a promise:
+
+1. **It cannot spoliate evidence.** `siftpp-spoliation-test` throws 14 destructive
+   operations (dump, write, delete, shell, exfiltrate) at the live server: all 14
+   are refused because those capabilities do not exist, and the evidence SHA-256
+   is identical before and after. The guardrail is architectural, not a prompt.
+2. **Its chain of custody is tamper-evident.** `siftpp-tamper-test` edits one
+   record in the 302-record audit log and `verify_chain` flags the break at that
+   exact record. Every finding cites the precise tool command and the SHA-256 of
+   its full output.
+3. **It argues with itself.** The Skeptic independently reruns tools to refute
+   each finding; in the reproducible demo it catches and drops a false
+   injected-code claim, and on the real case it forced two revisions of an
+   over-stated `ngentask.exe` attribution down to a narrower confirmed claim.
 
 ## How We Built It
 
