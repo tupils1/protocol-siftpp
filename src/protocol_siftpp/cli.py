@@ -30,6 +30,21 @@ from .orchestrator import Orchestrator
 from .schema import CaseReport, FindingStatus
 
 
+def _load_dotenv(path: Path = Path(".env")) -> None:
+    """Load simple KEY=VALUE pairs from an ignored local .env file."""
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip().lstrip("\ufeff")
+        value = value.strip().strip("\"'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 def _server_params(evidence: Path, server_audit: Path, offline: bool) -> StdioServerParameters:
     env = {
         **os.environ,
@@ -88,6 +103,7 @@ def render_markdown(report: CaseReport) -> str:
 
 
 async def _run(args: argparse.Namespace) -> None:
+    _load_dotenv()
     evidence = Path(args.evidence)
     if not evidence.is_file():
         raise SystemExit(f"Evidence file not found: {evidence}")
@@ -121,6 +137,7 @@ async def _run(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    _load_dotenv()
     p = argparse.ArgumentParser(
         prog="siftpp-investigate",
         description="Self-verifying autonomous DFIR investigation of a memory image.",
