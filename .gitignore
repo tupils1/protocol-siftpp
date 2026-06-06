@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Secrets / credentials — never commit
+.env
+*.pem
+*.key
+secrets/
+
+# Internal strategy / handoff notes — keep OUT of the public repo
+HANDOFF.md
+internal/
+
+# Forensic evidence & large case data — never commit
+evidence/
+case-data/
+samples/
+*.raw
+*.mem
+*.vmem
+*.E01
+*.dd
+*.img
+
+# Agent run outputs (curated examples for submission go under docs/examples/, force-added)
+analysis/
+reports/
+exports/
+*.log
+
+# OS
+.DS_Store
