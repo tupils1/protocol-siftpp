@@ -12,6 +12,18 @@ Protocol SIFT++ has two run paths:
 - Network access for the first dependency install and case download.
 - `DEEPSEEK_API_KEY` or `ANTHROPIC_API_KEY` for the real agent run.
 
+Command form by platform:
+
+```powershell
+# Windows
+C:\Users\Administrator\.local\bin\uv.exe run <command>
+```
+
+```bash
+# Linux / SANS SIFT
+uv run <command>
+```
+
 On Windows, this project was verified with:
 
 ```powershell
@@ -94,6 +106,12 @@ tamper-evident audit log:
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
 ```
 
+Linux / SANS SIFT:
+
+```bash
+uv run siftpp-demo
+```
+
 Expected result:
 
 ```text
@@ -123,6 +141,13 @@ C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
 ```
 
+Linux / SANS SIFT:
+
+```bash
+uv run siftpp-spoliation-test
+uv run siftpp-tamper-test
+```
+
 - `siftpp-spoliation-test` throws 14 destructive operations (dump, write, delete,
   shell, exfiltrate) at the live MCP server; all are refused and the evidence
   SHA-256 is identical before and after.
@@ -137,6 +162,12 @@ Download the selected SANS case:
 
 ```powershell
 C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
+```
+
+Linux / SANS SIFT:
+
+```bash
+uv run siftpp-download-case
 ```
 
 Expected evidence path:
