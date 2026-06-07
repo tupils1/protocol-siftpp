@@ -1,0 +1,86 @@
+OS: Linux 6.6.114.1-microsoft-standard-WSL2 x86_64
+IMG: /home/dministrator/ev/base-file-memory.img (2147483648 bytes)
+sha256: 4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
+(expected: 4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd)
+--- windows.info (online symbols allowed) ---
+
+[
+  {
+    "Value": "0xf80261e04000",
+    "Variable": "Kernel Base",
+    "__children": []
+  },
+  {
+    "Value": "0x1a7000",
+    "Variable": "DTB",
+    "__children": []
+  },
+  {
+    "Value": "file:///home/dministrator/siftpp-venv-linux/lib/python3.12/site-packages/volatility3/symbols/windows/ntkrnlmp.pdb/A32C55CDEBC1441DAC80552A86F5F11F-1.json.xz",
+    "Variable": "Symbols",
+    "__children": []
+  },
+  {
+    "Value": "True",
+    "Variable": "Is64Bit",
+    "__children": []
+  },
+  {
+    "Value": "False",
+    "Variable": "IsPAE",
+    "__children": []
+  },
+  {
+    "Value": "0 WindowsIntel32e",
+    "Variable": "layer_name",
+    "__children": []
+  },
+  {
+    "Value": "1 FileLayer",
+    "Variable": "memory_layer",
+    "__children": []
+  },
+  {
+    "Value": "0xf80262097d90",
+    "Variable": "KdVersionBlock",
+    "__children": []
+  },
+  {
+    "Value": "1983.17664",
+    "Variable": "Major/Minor",
+    "__children": []
+  },
+  {
+    "Value": "35657",
+    "Variable": "MachineType",
+    "__children": []
+  },
+  {
+    "Value": "0",
+    "Variable": "KeNumberProcessors",
+    "__children": []
+  },
+  {
+    "Value": "2018-09-06 19:28:44+00:00",
+    "Variable": "SystemTime",
+    "__children": []
+  },
+  {
+    "Value": "C:\\windows",
+    "Variable": "NtSystemRoot",
+    "__children": []
+  },
+  {
+    "Value": "NtProductServer",
+    "Variable": "NtProductType",
+    "__children": []
+  },
+  {
+    "Value": "6",
+    "Variable": "NtMajorVersion",
+    "__children": []
+  },
+  {
+    "Value": "3",
+    "Variable":
+VOL_INFO_OK

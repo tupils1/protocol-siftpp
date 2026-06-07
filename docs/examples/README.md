@@ -16,6 +16,11 @@ large), so these curated copies are the in-repo evidence.
   302 records (this is required deliverable #8).
 - `spoliation_report.json` — result of `siftpp-spoliation-test` on the real
   image: 14/14 destructive attempts refused, evidence SHA-256 unchanged.
+- `srl-2018-linux/` — independent **Linux** re-run (Ubuntu 22.04), same image
+  (sha256-identical). 2 confirmed of 8; audit `(True, 256)`. Its report
+  **refutes** the DKOM claim the Windows run confirmed — a real caught over-claim.
+- `linux-volcheck.txt`, `linux-smoke.txt`, `linux-realrun.log` — Linux
+  Volatility/portability verification + run logs.
 
 ## Verify the audit hash chain (no key needed)
 

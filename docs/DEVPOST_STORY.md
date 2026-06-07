@@ -99,6 +99,11 @@ review plus the Skeptic's independent tool reruns as the ground-truth proxy.
 - Wrote a tamper-evident 302-record audit log.
 - Built an architectural guardrail instead of relying only on prompting.
 - Documented accuracy limits, missed artifacts, and no-Skeptic baseline behavior.
+- Reproduced the investigation end to end on Linux (same image, sha256-identical).
+  The re-run's Skeptic refuted a "DKOM rootkit" claim the Windows run had
+  confirmed, correctly identifying it as a Volatility symbol-resolution artifact
+  (`KeNumberProcessors=0`; even `System`/PID 4 missing) — the system catching its
+  own over-claim.
 
 ## What Is Next
 

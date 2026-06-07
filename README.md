@@ -6,12 +6,16 @@
 >    server (`siftpp-spoliation-test`: 14/14 attacks refused, evidence hash unchanged).
 > 2. **It catches its own hallucinations** — a Skeptic agent independently reruns
 >    tools to refute each finding (`confirmed`/`inferred`/`refuted`) and sends weak
->    ones back for re-investigation.
+>    ones back for re-investigation. (An independent re-run even **refuted its own
+>    "DKOM rootkit" confirmation**, correctly flagging it as a Volatility symbol
+>    artifact — `docs/examples/srl-2018-linux/`.)
 > 3. **It keeps a tamper-evident chain of custody** — a hash-chained audit log where
 >    editing any one record is detected (`siftpp-tamper-test`).
 >
 > Real run on a SANS APT memory image: **4 confirmed of 10 findings, 2
-> self-corrections, evidence integrity verified, 302-record audit (hash chain OK).**
+> self-corrections, evidence integrity verified, 302-record audit (hash chain OK)** —
+> independently **reproduced on Linux** (sha256-identical evidence; the re-run
+> refuted its own DKOM claim).
 > See the [architecture diagram](docs/architecture.png) and the
 > [real report + logs](docs/examples/). See it with **no API key**:
 > `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
