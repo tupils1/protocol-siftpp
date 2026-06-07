@@ -35,6 +35,27 @@ audit log is tamper-evident (edit one record and `verify_chain` fails), and ever
 finding cites the exact tool command plus its output hash. Forensic defensibility,
 not a prompt that says "be careful."
 
+## Judging scorecard — verify each claim in seconds
+
+| FIND EVIL! criterion | What Protocol SIFT++ does | Verify it yourself |
+|---|---|---|
+| **Autonomous + real-time self-correction** *(tiebreaker)* | Investigator/Skeptic loop, no human in the loop; one run forced 2 corrections, and an independent re-run **refuted its own confirmed "DKOM rootkit"** as a tool artifact | `uv run siftpp-demo` (no key); `docs/examples/srl-2018-linux/report.md` → *Refuted* |
+| **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding → `confirmed`/`inferred`/`refuted`; separates fact from interpretation and lists what it missed | `docs/ACCURACY_REPORT.md` |
+| **Depth > breadth** | One APT memory case, every claim verified, **reproduced on Windows *and* Linux** with byte-identical evidence | `docs/examples/srl-2018-base-file-memory/` + `…/srl-2018-linux/` |
+| **Architectural (not prompt) guardrails** | Read-only MCP server: no shell, no dump/write/network tool *exists* — spoliation is impossible by construction | `uv run siftpp-spoliation-test` → 14/14 refused, evidence unchanged |
+| **Audit trail to specific tool executions** | Hash-**chained** append-only log (tamper-evident) + every finding cites command + output SHA-256 | `uv run siftpp-tamper-test` → edit detected; `verify_chain(...)` → `(True, 302)` |
+| **Usability / docs** | One command, no API key, runs on Windows + Linux/SIFT; full docs | `uv run siftpp-demo` |
+
+> **What most autonomous-IR agents lack — and SIFT++ has:** an **adversarial Skeptic**
+> that challenges every finding, a **cryptographic chain of custody** (hash-chained
+> audit + per-finding evidence hashes), and safety that's **provable by attacking it**.
+> A broad agent that can't verify itself just produces more unverified claims, faster.
+
+### Deliberate scope (why "narrow" is the point)
+- **Depth over breadth (criterion #3).** One case, fully verified and reproduced — not many cases, lightly checked. The loop is tool-, model-, and OS-agnostic (Volatility 3 today; Windows + Linux/SIFT; DeepSeek *or* Anthropic), so breadth is configuration, not a redesign.
+- **Terminal- and artifact-native, not a dashboard.** Output is structured (`report.json`) and tamper-evident (`audit.jsonl`) so it feeds downstream tooling and stays court-defensible — the forensic idiom, not a demo UI.
+- **Honest accuracy.** No public answer key exists for this SANS sample, so instead of a self-graded score we use adversarial verification, cross-run reproduction, and disclosed misses.
+
 ## Final Case Run
 
 Selected SANS sample:
