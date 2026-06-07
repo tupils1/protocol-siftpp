@@ -15,7 +15,7 @@ adversarially self-correcting, with a tamper-evident chain of custody.
 ## Built With
 
 `python`, `volatility3`, `model-context-protocol (mcp)`, `deepseek` (Anthropic-
-compatible API), `anthropic` SDK, `pydantic`, `uv`
+compatible API), `anthropic` SDK, `pydantic`, `starlette`, `uvicorn`, `uv`
 
 ## Links
 
@@ -50,6 +50,9 @@ Accomplishments → What Is Next).
    is detected by `verify_chain`.
 3. Adversarial self-correction — Skeptic refutes/downgrades the Investigator; real
    run forced two `ngentask.exe` revisions; the no-key demo drops a false positive.
+4. Quantified accuracy without pretending to have an official answer key: manual
+   Volatility-review proxy, cross-run corrected precision 1.00 / recall 0.75 /
+   F1 0.86, with DKOM counted as a caught false positive.
 
 ## Final pre-submit checklist
 

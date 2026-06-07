@@ -44,9 +44,11 @@ cross-checks. This limitation should be stated in the Devpost submission.
 ## Results Summary
 
 ```text
-confirmed findings: 4
+windows-run confirmed findings: 4
+cross-run corrected confirmed findings: 3
 inferred findings: 6
-refuted findings: 0
+windows-run refuted findings: 0
+cross-run corrected false positives: 1 (DKOM/rootkit)
 self-correction iterations: 2
 audit records: 302
 model calls: 99
@@ -63,6 +65,49 @@ The run ended with:
 ```text
 4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.
 ```
+
+The cross-platform re-run later refuted one of those Windows confirmed findings
+(`DKOM/rootkit`) as a Volatility symbol/KDBG artifact. For scoring below, that
+finding is counted as a caught false positive, not as a true confirmed finding.
+
+## Quantitative Accuracy (Manual-Review Proxy)
+
+There is no public official answer key for this exact `base-file-memory.img`
+artifact. To avoid unverifiable self-grading, we use a small manual Volatility
+review proxy: four actionable artifact clusters that are directly supported by
+`psscan` and `netscan` and are concrete enough to score.
+
+Manual-review proxy positives:
+
+1. WMI -> `powershell.exe` -> 32-bit `powershell.exe` -> short-lived
+   `rundll32.exe` chain, with PowerShell connections to `172.16.4.10:8080`.
+2. `Uninstall.exe` spawned by `cmd.exe`, two-second runtime, RPC connection to
+   `172.16.7.12:135`.
+3. `ngentask.exe` one-second process with two connections to
+   `172.16.4.10:8080`, the same destination as the PowerShell chain.
+4. `subject_srv.ex` service-child process with TCP 3262 listener and connection
+   to `172.16.5.50:44262`; the process/socket facts are real, while the
+   backdoor/C2 label is still only inferred.
+
+Scoring is intentionally conservative:
+
+- `TP`: a confirmed finding matches one manual-review proxy positive at the
+  right level of specificity.
+- `FP`: a confirmed finding is contradicted or too strong for the evidence.
+- `FN`: a manual-review proxy positive was not retained as a confirmed finding.
+- Inferred findings are not counted as confirmed positives.
+
+| Scoring snapshot | Predicted confirmed | TP | FP | FN | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| No-Skeptic baseline: raw high-confidence Investigator claims, cluster-level credit | 8 | 4 | 4 | 0 | 0.50 | 1.00 | 0.67 |
+| Windows SIFT++ confirmed findings before cross-run correction | 4 | 3 | 1 | 1 | 0.75 | 0.75 | 0.75 |
+| Cross-run corrected confirmed findings after Linux Skeptic refuted DKOM | 3 | 3 | 0 | 1 | 1.00 | 0.75 | 0.86 |
+
+The important point is not that this proxy replaces an official answer key. It
+does not. The point is that the same evidence trail lets us score the system
+honestly, and the Skeptic/cross-run correction improves precision by removing
+the DKOM over-claim while preserving the three strongest confirmed behavioral
+findings.
 
 ## Manual Evidence Summary
 
@@ -90,20 +135,20 @@ High-signal artifacts:
 - `Uninstall.exe` PID 2340, child of `cmd.exe` PID 4808, ran for two seconds
   and connected to `172.16.7.12:135`.
 
-## Findings Table
+## Windows Run Findings And Corrected Assessment
 
-| Final status | Claim summary | Confidence | Ground truth assessment |
-| --- | --- | ---: | --- |
-| confirmed | DKOM/process-list hiding: traversal plugins empty while pool scans recover processes and sockets. | 0.92 | Supported by the sharp split between empty EPROCESS-list plugins and populated `psscan`/`netscan`; rare Volatility compatibility issues cannot be fully excluded. |
-| confirmed | PowerShell C2 chain: WMI-spawned PowerShell, child 32-bit PowerShell, many short-lived `rundll32.exe` children, connections to `172.16.4.10:8080`. | 0.95 | Process and network facts are directly supported; C2 label is a strong inference because command lines are unavailable. |
-| confirmed | `Uninstall.exe` child of `cmd.exe`, two-second runtime, RPC connection to `172.16.7.12:135`. | 0.85 | Supported by `psscan` and `netscan`; malicious/lateral-movement label remains interpretive. |
-| confirmed | `ngentask.exe` two connections to `172.16.4.10:8080`, same destination as PowerShell chain, within one-second lifespan. | 0.85 | Final corrected claim is supported after two reinvestigation rounds; exact command line and parent identity remain unavailable. |
-| inferred | `subject_srv.ex` as backdoor/C2 service on TCP 3262. | 0.75 | Process and sockets are real; backdoor label is plausible but not directly proven without binary/path/service data. |
-| inferred | `rundll32.exe` burst as beaconing or payload execution. | 0.72 | 28 child processes are real; no command line, network, DLL, or injection data confirms beaconing. |
-| inferred | Shared C2 infrastructure at `172.16.4.10:8080`. | 0.85 | Shared destination is real; C2 role cannot be proven from memory metadata alone. |
-| inferred | WMI persistence via event subscription. | 0.75 | WMI-spawned PowerShell is real; event subscription persistence is not directly evidenced. |
-| inferred | Initial `ngentask.exe` hijack/C2 claim. | 0.65 | Downgraded by Skeptic and corrected in later iterations. |
-| inferred | Intermediate `ngentask.exe` correlation claim. | 0.55 | Downgraded again; led to narrower confirmed final claim. |
+| Windows status | Corrected scoring status | Claim summary | Confidence | Ground truth assessment |
+| --- | --- | --- | ---: | --- |
+| confirmed | false positive / removed | DKOM/process-list hiding: traversal plugins empty while pool scans recover processes and sockets. | 0.92 | Linux re-run refuted this as a Volatility symbol/KDBG artifact: `KeNumberProcessors=0` and even `System`/PID 4 missing from traversal views. Counted as FP in Windows-only scoring and removed in cross-run scoring. |
+| confirmed | TP | PowerShell C2 chain: WMI-spawned PowerShell, child 32-bit PowerShell, many short-lived `rundll32.exe` children, connections to `172.16.4.10:8080`. | 0.95 | Process and network facts are directly supported; C2 label is a strong inference because command lines are unavailable. |
+| confirmed | TP | `Uninstall.exe` child of `cmd.exe`, two-second runtime, RPC connection to `172.16.7.12:135`. | 0.85 | Supported by `psscan` and `netscan`; malicious/lateral-movement label remains interpretive. |
+| confirmed | TP | `ngentask.exe` two connections to `172.16.4.10:8080`, same destination as PowerShell chain, within one-second lifespan. | 0.85 | Final corrected claim is supported after two reinvestigation rounds; exact command line and parent identity remain unavailable. |
+| inferred | FN at confirmed threshold | `subject_srv.ex` as backdoor/C2 service on TCP 3262. | 0.75 | Process and sockets are real; backdoor label is plausible but not directly proven. A narrower confirmed process/socket finding would have improved recall. |
+| inferred | not confirmed | `rundll32.exe` burst as beaconing or payload execution. | 0.72 | 28 child processes are real; no command line, network, DLL, or injection data confirms beaconing. |
+| inferred | not confirmed | Shared C2 infrastructure at `172.16.4.10:8080`. | 0.85 | Shared destination is real; C2 role cannot be proven from memory metadata alone. |
+| inferred | not confirmed | WMI persistence via event subscription. | 0.75 | WMI-spawned PowerShell is real; event subscription persistence is not directly evidenced. |
+| inferred | corrected over-claim | Initial `ngentask.exe` hijack/C2 claim. | 0.65 | Downgraded by Skeptic and corrected in later iterations. |
+| inferred | corrected over-claim | Intermediate `ngentask.exe` correlation claim. | 0.55 | Downgraded again; led to narrower confirmed final claim. |
 
 ## Self-Correction Evidence
 
@@ -124,14 +169,16 @@ claim matched the evidence.
 
 ## False Positives
 
-No final `confirmed` finding is directly contradicted by manual Volatility
-review. However, two confirmed findings retain interpretive labels:
+The Windows run had one confirmed false positive after cross-platform review:
 
 - DKOM/rootkit: strongly supported by the plugin split, but direct pointer
   inspection was not performed. **Update: an independent Linux re-run refuted this
   as a Volatility symbol-resolution artifact (`KeNumberProcessors=0`; even
-  `System`/PID 4 is missing) — see "Cross-Platform Reproduction" below. We now
+  `System`/PID 4 is missing) - see "Cross-Platform Reproduction" below. We now
   treat the DKOM confirmation as a caught over-claim, not a confirmed finding.**
+
+One retained confirmed finding still has an interpretive label:
+
 - PowerShell C2 chain: the behavior is highly suspicious, but command lines and
   payloads were unavailable.
 
@@ -229,10 +276,14 @@ With Skeptic verification:
 - 5 of the 8 initial findings were downgraded to inferred.
 - 1 downgraded finding (`ngentask.exe`) triggered two self-correction rounds.
 - The final corrected report ended with 4 confirmed and 6 inferred findings.
+- The cross-platform re-run then removed the DKOM false positive, leaving 3
+  retained confirmed findings for the manual-review proxy score.
 
 The most important improvement is qualitative: the system replaced a stronger
 unsupported claim about `ngentask.exe` hijacking/C2 with a narrower confirmed
-behavioral claim tied to `psscan` and `netscan`.
+behavioral claim tied to `psscan` and `netscan`. Quantitatively, the
+manual-review proxy score improved from F1 0.75 on the Windows confirmed set to
+F1 0.86 after cross-run DKOM correction, with precision rising from 0.75 to 1.00.
 
 ## Cross-Platform Reproduction (Linux) and a Real Self-Correction on "DKOM"
 

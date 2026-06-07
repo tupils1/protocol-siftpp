@@ -12,10 +12,11 @@
 > 3. **It keeps a tamper-evident chain of custody** — a hash-chained audit log where
 >    editing any one record is detected (`siftpp-tamper-test`).
 >
-> Real run on a SANS APT memory image: **4 confirmed of 10 findings, 2
-> self-corrections, evidence integrity verified, 302-record audit (hash chain OK)** —
-> independently **reproduced on Linux** (sha256-identical evidence; the re-run
-> refuted its own DKOM claim).
+> Windows run on a SANS APT memory image: **4 confirmed of 10 findings, 2
+> self-corrections, evidence integrity verified, 302-record audit (hash chain OK)**.
+> Independent Linux reproduction refuted one of those confirmed findings
+> (`DKOM/rootkit`) as a tool artifact, leaving **3 retained confirmed findings,
+> precision 1.00, recall 0.75, F1 0.86** under the manual-review proxy.
 > See the [architecture diagram](docs/architecture.png) and the
 > [real report + logs](docs/examples/). See it with **no API key**:
 > `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
@@ -40,7 +41,7 @@ not a prompt that says "be careful."
 | FIND EVIL! criterion | What Protocol SIFT++ does | Verify it yourself |
 |---|---|---|
 | **Autonomous + real-time self-correction** *(tiebreaker)* | Investigator/Skeptic loop, no human in the loop; one run forced 2 corrections, and an independent re-run **refuted its own confirmed "DKOM rootkit"** as a tool artifact | `uv run siftpp-demo` (no key); `docs/examples/srl-2018-linux/report.md` → *Refuted* |
-| **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding → `confirmed`/`inferred`/`refuted`; separates fact from interpretation and lists what it missed | `docs/ACCURACY_REPORT.md` |
+| **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding -> `confirmed`/`inferred`/`refuted`; cross-run correction removed DKOM FP; manual-review proxy: precision 1.00, recall 0.75, F1 0.86 | `docs/ACCURACY_REPORT.md` |
 | **Depth > breadth** | One APT memory case, every claim verified, **reproduced on Windows *and* Linux** with byte-identical evidence | `docs/examples/srl-2018-base-file-memory/` + `…/srl-2018-linux/` |
 | **Architectural (not prompt) guardrails** | Read-only MCP server: no shell, no dump/write/network tool *exists* — spoliation is impossible by construction | `uv run siftpp-spoliation-test` → 14/14 refused, evidence unchanged |
 | **Audit trail to specific tool executions** | Hash-**chained** append-only log (tamper-evident) + every finding cites command + output SHA-256 | `uv run siftpp-tamper-test` → edit detected; `verify_chain(...)` → `(True, 302)` |
@@ -70,6 +71,11 @@ Final DeepSeek run on the extracted memory image:
 4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.
 audit log: 302 records, hash chain OK
 ```
+
+Cross-platform correction: an independent Linux re-run refuted the Windows
+`DKOM/rootkit` confirmation as a Volatility symbol/KDBG artifact. The corrected
+confirmed set used for the accuracy table is therefore 3 true positives, 0 false
+positives, and 1 false negative: precision 1.00, recall 0.75, F1 0.86.
 
 The key corrected finding involved `ngentask.exe`: the Investigator initially
 overstated the malware attribution, the Skeptic downgraded it twice, and the

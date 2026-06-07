@@ -26,6 +26,11 @@ On the selected SANS sample, the final run produced:
 audit log: 302 records, hash chain OK
 ```
 
+An independent Linux reproduction later refuted one Windows-confirmed
+`DKOM/rootkit` claim as a Volatility symbol/KDBG artifact. Under the documented
+manual-review proxy, the cross-run corrected confirmed set scores precision
+1.00, recall 0.75, F1 0.86.
+
 The most visible correction involved `ngentask.exe`. The Investigator initially
 overstated a malware/C2 attribution. The Skeptic downgraded it, the Investigator
 reinvestigated, the Skeptic downgraded it again, and the system finally
