@@ -1,13 +1,14 @@
 # Agent Execution Logs
 
-The final real SANS case run writes two JSONL logs:
+Runs write append-only JSONL logs (audit + mcp-server). Live runs land under the
+gitignored `analysis/`; curated copies for review are committed under
+`docs/examples/` and pass `verify_chain` on a fresh clone:
 
-- `analysis/srl-2018-base-file-memory/audit.jsonl`
-- `analysis/srl-2018-base-file-memory/mcp-server.jsonl`
+- `docs/examples/srl-2018-base-file-memory/audit.jsonl` - SANS, Windows (302 records)
+- `docs/examples/srl-2018-linux/audit.jsonl` - SANS, Linux reproduction (256 records)
+- `docs/examples/m57-pat-2009-12-05/audit.jsonl` - DigitalCorpora M57 (265 records)
 
-These logs are generated artifacts and are not committed to git because the
-`analysis/` directory is ignored. They should be included with the Devpost
-submission package or shown in the demo video.
+Verify all three at once: `uv run siftpp-verify`.
 
 ## Final Run Summary
 
@@ -46,6 +47,18 @@ iteration 1: 1 finding(s) refuted/low-confidence -> re-investigate
 review_submitted: revised ngentask.exe claim -> inferred, confidence 0.55
 iteration 2: 1 finding(s) refuted/low-confidence -> re-investigate
 review_submitted: narrowed ngentask.exe behavior claim -> confirmed, confidence 0.85
+```
+
+## Additional Runs
+
+```text
+Linux reproduction (same image, sha256-identical):
+  2 confirmed of 8 findings; 2 self-correction iterations; audit (True, 256).
+  The Linux Skeptic refuted the Windows "DKOM rootkit" confirmation as a
+  Volatility symbol/KDBG artifact (KeNumberProcessors=0).
+M57 Pat (DigitalCorpora, public answer key):
+  4 confirmed of 9 findings; 2 self-correction iterations; audit (True, 265).
+  Confirmed findings match the documented Advanced Keylogger -> P/R/F1 = 1.00.
 ```
 
 ## Verify The Hash Chain

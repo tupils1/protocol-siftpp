@@ -9,18 +9,18 @@ Use this before submitting on Devpost.
 - [x] MIT license: `LICENSE`
 - [ ] Demo video, five minutes max, showing real SANS case data and at least
   one self-correction.
-- [x] Architecture diagram: `docs/ARCHITECTURE.md`
-- [x] Written description draft: `docs/DEVPOST_STORY.md`
-- [x] Dataset documentation: `docs/DATASET.md`
-- [x] Accuracy and integrity report: `docs/ACCURACY_REPORT.md`
-- [x] Try-it-out instructions: `docs/TRY_IT_OUT.md`
-- [x] Agent execution logs generated locally:
-  `analysis/srl-2018-base-file-memory/audit.jsonl`
+- [x] Architecture diagram: `docs/architecture.png` (source: `docs/ARCHITECTURE.md`)
+- [x] Written description draft: `docs/DEVPOST_STORY.md` (+ field packet `docs/DEVPOST_SUBMISSION.md`)
+- [x] Dataset documentation: `docs/DATASET.md` (SANS SRL-2018 + DigitalCorpora M57)
+- [x] Accuracy and integrity report: `docs/ACCURACY_REPORT.md` (SANS proxy F1 0.86; M57 public answer key P/R/F1 1.00)
+- [x] Try-it-out instructions: `docs/TRY_IT_OUT.md` (one command: `uv run siftpp-verify`)
+- [x] Agent execution logs: committed in `docs/examples/` (audit.jsonl for SANS Windows/Linux + M57; live runs under gitignored `analysis/`)
 - [x] Agent execution log summary: `docs/RUN_LOGS.md`
 
 ## Demo Video Shot List
 
 - [ ] Show GitHub repo and project name.
+- [ ] Run `uv run siftpp-verify`: one command, every check `[PASS]`, `ALL CHECKS PASSED`.
 - [ ] Show the real SANS case command.
 - [ ] Show final run summary:
   `4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.`
@@ -30,16 +30,25 @@ Use this before submitting on Devpost.
 - [ ] Run `siftpp-tamper-test` live: edit one record -> `verify_chain` -> `(False, 152)`.
 - [ ] Show `READ_ONLY_PLUGINS` and evidence-integrity checks.
 - [ ] Show audit hash-chain verification result: `(True, 302)`.
+- [ ] Show the second public case (M57): confirmed findings match the documented keylogger (precision/recall 1.00).
+- [ ] (Optional) `uv run siftpp-gui` -> click the live attack button, watch 14/14 refused.
 
 ## Final Local Checks
+
+One command runs the whole proof suite (tests + all three audit chains + live
+spoliation + tamper):
+
+```powershell
+uv run siftpp-verify
+```
+
+Granular equivalents, if needed:
 
 ```powershell
 uv run pytest
 uv run ruff check .
 uv run siftpp-spoliation-test
 uv run siftpp-tamper-test
-uv run python -c `
-  "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 
 ## Do Not Submit
