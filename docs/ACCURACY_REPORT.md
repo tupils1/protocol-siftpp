@@ -320,3 +320,53 @@ demonstration of judging criterion #2 (catching its own errors). Both runs still
 surfaced the real suspicious artifacts (`subject_srv.ex`, the
 WMI -> PowerShell -> rundll32 chain, the internal `172.16.x` connections) and
 both kept evidence integrity intact (sha256 unchanged).
+
+## M57 Cross-Check: Accuracy vs a Public Answer Key (DigitalCorpora)
+
+The SANS scoring above uses a manual-review *proxy* because that artifact has no
+published answer key. To remove that caveat, we re-ran the full pipeline on a
+second, independent, **publicly documented** case: the DigitalCorpora
+**2009-M57-Patents** scenario, Pat's workstation memory image
+(`pat-2009-12-05`, sha256 `91df773d…`; outputs in
+`docs/examples/m57-pat-2009-12-05/`). The published ground truth for the Pat
+system is the installed **"Advanced Keylogger"** (sources: digitalcorpora.org
+M57-Patents scenario; published M57 forensic analyses).
+
+Ground truth — memory-observable artifacts of the documented compromise:
+
+1. The keylogger process running: `ToolKeylogger.exe` (from `C:\Program Files\XP Advanced\`).
+2. Its keystroke-capture DLL active in the shell: `ToolKeyloggerDLL.dll` loaded in `explorer.exe`.
+
+Scoring the **confirmed** findings against this answer key:
+
+| Confirmed finding | Verdict |
+| --- | --- |
+| `ToolKeyloggerDLL.dll` loaded in `explorer.exe` (keystroke capture) | TP |
+| `ToolKeylogger.exe` running as an `explorer.exe` child | TP |
+| `pslist`/`psscan` parity, no hidden/unlinked processes (correctly narrows the earlier "RWX injection" wording) | true negative — no extra malware, not a positive claim |
+| `ToolKeylogger.exe` loads WinSock/WinINet (networking *capability*) | true attribute of the confirmed keylogger; explicitly **not** an exfiltration claim |
+
+```text
+documented malicious artifacts: 2
+detected (confirmed):           2  (TP)
+false positives (confirmed):    0
+false negatives:                0
+Precision 1.00 · Recall 1.00 · F1 1.00   (confirmed set, vs the public answer key)
+```
+
+Why this is our strongest accuracy evidence — and still honest:
+
+- The agent confirmed the **documented** malware and nothing false.
+- It **declined to confirm** what this image cannot prove: actual data
+  **exfiltration** (`netscan` is unsupported on this Windows XP SP3 image) and the
+  exact **persistence mechanism** (no registry tooling). Those stayed at
+  `inferred`, not promoted to `confirmed` — so they do not inflate precision.
+- It **refuted** its own initial "code injected (RWX) into explorer" wording:
+  `malfind` is empty, so `ToolKeyloggerDLL.dll` is a normally file-backed module,
+  not private-RWX injected code — a second independent case of the system catching
+  its own over-claim.
+
+Scope caveat: this ground truth is the documented, keylogger-centric Pat-system
+compromise, not an exhaustive byte-level IOC list; the broader M57 data-exfil
+narrative is not observable in this single memory image. Within those bounds, the
+confirmed set matches the public answer exactly.

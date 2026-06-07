@@ -18,7 +18,8 @@
 > (`DKOM/rootkit`) as a tool artifact, leaving **3 retained confirmed findings,
 > precision 1.00, recall 0.75, F1 0.86** under the manual-review proxy.
 > Second independent public Windows memory case (DigitalCorpora M57 / Pat):
-> **4 confirmed of 9 findings, 2 self-corrections, 265-record audit (hash chain OK)**.
+> **4 confirmed of 9 findings, 2 self-corrections, 265-record audit (hash chain OK)** —
+> confirmed findings match the documented "Advanced Keylogger" (**precision/recall 1.00 vs a public answer key**).
 > See the [architecture diagram](docs/architecture.png) and the
 > [real report + logs](docs/examples/). See it with **no API key**:
 > `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
@@ -48,7 +49,7 @@ not a prompt that says "be careful."
 | FIND EVIL! criterion | What Protocol SIFT++ does | Verify it yourself |
 |---|---|---|
 | **Autonomous + real-time self-correction** *(tiebreaker)* | Investigator/Skeptic loop, no human in the loop; SANS and M57 runs each forced 2 corrections, and an independent re-run **refuted its own confirmed "DKOM rootkit"** as a tool artifact | `uv run siftpp-demo` (no key); `docs/examples/srl-2018-linux/report.md` -> *Refuted*; `docs/examples/m57-pat-2009-12-05/report.md` |
-| **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding -> `confirmed`/`inferred`/`refuted`; cross-run correction removed DKOM FP; manual-review proxy: precision 1.00, recall 0.75, F1 0.86 | `docs/ACCURACY_REPORT.md` |
+| **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding -> `confirmed`/`inferred`/`refuted`; cross-run correction removed DKOM FP; SANS manual-review proxy F1 0.86; **public answer key (M57): confirmed precision/recall/F1 = 1.00** | `docs/ACCURACY_REPORT.md` |
 | **Depth > breadth** | Primary SANS APT case, every claim verified, **reproduced on Windows *and* Linux** with byte-identical evidence; also reproduced on a second independent public Windows memory case | `docs/examples/srl-2018-base-file-memory/` + `docs/examples/srl-2018-linux/` + `docs/examples/m57-pat-2009-12-05/` |
 | **Architectural (not prompt) guardrails** | Read-only MCP server: no shell, no dump/write/network tool *exists* - spoliation is impossible by construction | `uv run siftpp-spoliation-test` -> 14/14 refused, evidence unchanged |
 | **Audit trail to specific tool executions** | Hash-**chained** append-only log (tamper-evident) + every finding cites command + output SHA-256 | `uv run siftpp-tamper-test` -> edit detected; `verify_chain(...)` -> `(True, 302)` |
