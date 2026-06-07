@@ -7,6 +7,7 @@ schemas), and exposes `call()` to invoke a tool and get the parsed JSON result.
 from __future__ import annotations
 
 import json
+import os
 from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
@@ -22,9 +23,13 @@ class McpForensics:
         self.anthropic_tools: list[dict[str, Any]] = []
         self._stdio_cm = None
         self._session_cm = None
+        self._errlog = None
 
     async def __aenter__(self) -> "McpForensics":
-        self._stdio_cm = stdio_client(self.params)
+        # Silence the forensic server's framework stderr ("Processing request...")
+        # so CLI/GUI/verify output stays clean; the audit log captures everything.
+        self._errlog = open(os.devnull, "w", encoding="utf-8")
+        self._stdio_cm = stdio_client(self.params, errlog=self._errlog)
         read, write = await self._stdio_cm.__aenter__()
         self._session_cm = ClientSession(read, write)
         self.session = await self._session_cm.__aenter__()
@@ -45,6 +50,8 @@ class McpForensics:
             await self._session_cm.__aexit__(*exc)
         if self._stdio_cm is not None:
             await self._stdio_cm.__aexit__(*exc)
+        if self._errlog is not None:
+            self._errlog.close()
 
     async def call(self, name: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         assert self.session is not None, "session not started"
