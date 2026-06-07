@@ -18,7 +18,7 @@ from typing import Any
 
 import uvicorn
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse
 from starlette.routing import Route
 
 from .mcp_client import McpForensics
@@ -60,6 +60,8 @@ button.danger{background:#cf222e}button.warn{background:#9a6700}
 a{color:#58a6ff;text-decoration:none}a:hover{text-decoration:underline}
 .runs li{margin:6px 0}
 .tag{display:inline-block;background:#21262d;border:1px solid #30363d;border-radius:999px;padding:1px 10px;font-size:12px;color:#8b949e}
+.sc{width:100%;border-collapse:collapse;font-size:13px}.sc td{border-bottom:1px solid #21262d;padding:6px 8px;vertical-align:top}.sc td:first-child{color:#fff;font-weight:600;white-space:nowrap}
+img.arch{max-width:100%;border-radius:8px;background:#fff;padding:6px}
 """
 
 HOME_JS = """
@@ -90,6 +92,22 @@ def home_html() -> str:
   <div class="guar"><span>🛡️</span><div><b>It cannot alter evidence.</b> Destructive actions don't exist in the tool server.</div></div>
   <div class="guar"><span>🔗</span><div><b>Tamper-evident chain of custody.</b> Editing any audit record breaks the hash chain.</div></div>
   <div class="guar"><span>🤖</span><div><b>It argues with itself.</b> An adversarial Skeptic refutes every finding (see reports below).</div></div>
+</div>
+
+<div class="card">
+  <h3>Judging scorecard</h3>
+  <table class="sc">
+    <tr><td>Autonomous + self-correction</td><td>Investigator/Skeptic loop; one run refuted its own "DKOM rootkit" call</td></tr>
+    <tr><td>Catches hallucinations</td><td>confirmed / inferred / refuted; M57 public answer key: P/R/F1 = 1.00</td></tr>
+    <tr><td>Depth &gt; breadth</td><td>one case, fully verified, reproduced on Windows + Linux + a 2nd public case</td></tr>
+    <tr><td>Architectural guardrail</td><td>read-only MCP; 14/14 attacks refused (try it below)</td></tr>
+    <tr><td>Audit trail</td><td>hash-chained log; every finding cites command + output sha256</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Architecture</h3>
+  <img class="arch" src="/architecture.png" alt="Protocol SIFT++ architecture">
 </div>
 
 <div class="card">
@@ -162,9 +180,17 @@ async def api_tamper(request: Any) -> JSONResponse:
     return JSONResponse({"html": html, "passed": bool(result.get("passed"))})
 
 
+async def architecture(request: Any) -> Any:
+    p = Path("docs/architecture.png")
+    if p.is_file():
+        return FileResponse(p, media_type="image/png")
+    return HTMLResponse("architecture.png not found", status_code=404)
+
+
 app = Starlette(routes=[
     Route("/", homepage),
     Route("/run/{name}", run_report),
+    Route("/architecture.png", architecture),
     Route("/api/spoliation", api_spoliation, methods=["POST"]),
     Route("/api/tamper", api_tamper, methods=["POST"]),
 ])

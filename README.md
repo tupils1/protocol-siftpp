@@ -66,10 +66,9 @@ not a prompt that says "be careful."
   case to prove the loop is not case-specific. The loop is tool-, model-, and
   OS-agnostic (Volatility 3 today; Windows + Linux/SIFT; DeepSeek *or*
   Anthropic), so breadth is configuration, not a redesign.
-- **Verification > volume.** A broader agent that cannot verify itself just
-  produces more unverified claims, faster. We chose one case, every claim
-  adversarially checked and reproduced across OS, because the rubric explicitly
-  rewards depth over breadth.
+- **Verification > volume.** We chose one case, every claim adversarially checked
+  and reproduced across OS, because the rubric explicitly rewards depth over
+  breadth.
 - **Terminal- and artifact-native, not a dashboard.** Output is structured (`report.json`) and tamper-evident (`audit.jsonl`) so it feeds downstream tooling and stays court-defensible — the forensic idiom, not a demo UI.
 - **Honest accuracy.** No public answer key exists for this SANS sample, so instead of a self-graded score we use adversarial verification, cross-run reproduction, and disclosed misses.
 

@@ -31,6 +31,16 @@ uv run pytest
 uv run ruff check .
 ```
 
+## Verify Everything (one command, no API key)
+
+```bash
+uv run siftpp-verify
+```
+
+Runs the test suite, verifies all three audit hash chains (SANS Windows/Linux +
+M57), and runs the live spoliation + tamper proofs. Expect a `[PASS]` for each and
+`==== ALL CHECKS PASSED ====`.
+
 ## Docker Quick Check (no API key)
 
 Judges can verify the no-key path with one container command. It runs the replay
@@ -188,6 +198,10 @@ or create a local `.env` file that is not committed:
 DEEPSEEK_API_KEY=<your key>
 SIFTPP_LLM_PROVIDER=deepseek
 ```
+
+> Model: the default is `deepseek-v4-pro` (highest accuracy). For a cheaper/faster
+> run set `SIFTPP_MODEL=deepseek-v4-flash` (or pass `--model`). Any
+> Anthropic-compatible endpoint also works — `--provider anthropic` uses Opus 4.8.
 
 Run:
 
