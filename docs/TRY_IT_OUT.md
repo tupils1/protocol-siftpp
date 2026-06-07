@@ -19,6 +19,45 @@ C:\Users\Administrator\.local\bin\uv.exe run pytest
 C:\Users\Administrator\.local\bin\uv.exe run ruff check .
 ```
 
+## Docker Quick Check (no API key)
+
+Judges can verify the no-key path with one container command. It runs the replay
+demo, then attacks the read-only MCP server, then tampers with the audit log:
+
+```bash
+docker build -t siftpp .
+docker run --rm siftpp
+```
+
+Expected high-level result:
+
+```text
+1 confirmed of 2 findings; 1 self-correction iteration(s); evidence integrity verified.
+RESULT: PASS - evidence cannot be altered/dumped/exfiltrated by construction
+RESULT: PASS - tampering detected
+```
+
+For a real DeepSeek run in Docker, mount the evidence read-only, mount an output
+directory, and pass the key as an environment variable:
+
+```bash
+docker run --rm \
+  -e DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY" \
+  -v "$PWD/evidence/srl-2018-base-file-memory/extracted/base-file-memory.img:/evidence/base-file-memory.img:ro" \
+  -v "$PWD/analysis-docker:/app/analysis" \
+  siftpp \
+  sh -lc '.venv/bin/siftpp-investigate \
+    --provider deepseek \
+    --evidence /evidence/base-file-memory.img \
+    --out analysis/srl-2018-base-file-memory \
+    --case-id srl-2018-base-file-memory \
+    --offline \
+    --max-iterations 3'
+```
+
+Do not bake `.env` or evidence files into the image; `.dockerignore` excludes
+them from the build context.
+
 On Linux or SANS SIFT Workstation, install `uv` and replace the Windows `uv`
 path with:
 
