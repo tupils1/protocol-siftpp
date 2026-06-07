@@ -36,5 +36,8 @@ exports/
 # Local preview tooling (machine-specific paths)
 .claude/launch.json
 
+# Demo video production assets (audio/clips — final video goes to Devpost, not git)
+video/
+
 # OS
 .DS_Store
