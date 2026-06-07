@@ -112,11 +112,15 @@ review plus the Skeptic's independent tool reruns as the ground-truth proxy.
 
 ## What Is Next
 
-The next step would be broader tool coverage: recovered command lines, registry
-hives, packet payloads, and file-system artifacts where available. The same
-Investigator/Skeptic architecture could also compare memory evidence against
-endpoint logs or network captures, making each claim stronger before it becomes
-`confirmed`.
+We deliberately optimized for verification over volume. A broader agent that
+cannot verify itself just produces more unverified claims, faster. Protocol
+SIFT++ chose one case, every claim adversarially checked and reproduced across
+OS, because the rubric explicitly rewards depth over breadth.
+
+The next step is breadth as configuration, not redesign: add more read-only tool
+adapters for recovered command lines, registry hives, packet payloads, and
+file-system artifacts, while keeping the same Investigator/Skeptic verification
+loop and the same chain-of-custody guarantees.
 
 ## Submission Links
 

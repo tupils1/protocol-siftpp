@@ -21,6 +21,11 @@
 > [real report + logs](docs/examples/). See it with **no API key**:
 > `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
 
+Most autonomous-IR agents compete on speed or breadth. Almost none can *prove*
+they never touched the evidence, fewer catch their *own* hallucinations, and
+almost none publish their accuracy, including misses. Protocol SIFT++ does all
+three.
+
 A self-verifying, autonomous DFIR analyst for
 [SANS FIND EVIL! 2026](https://findevil.devpost.com/), built around read-only
 forensic tools, adversarial verification, and tamper-evident audit logs.
@@ -54,6 +59,10 @@ not a prompt that says "be careful."
 
 ### Deliberate scope (why "narrow" is the point)
 - **Depth over breadth (criterion #3).** One case, fully verified and reproduced — not many cases, lightly checked. The loop is tool-, model-, and OS-agnostic (Volatility 3 today; Windows + Linux/SIFT; DeepSeek *or* Anthropic), so breadth is configuration, not a redesign.
+- **Verification > volume.** A broader agent that cannot verify itself just
+  produces more unverified claims, faster. We chose one case, every claim
+  adversarially checked and reproduced across OS, because the rubric explicitly
+  rewards depth over breadth.
 - **Terminal- and artifact-native, not a dashboard.** Output is structured (`report.json`) and tamper-evident (`audit.jsonl`) so it feeds downstream tooling and stays court-defensible — the forensic idiom, not a demo UI.
 - **Honest accuracy.** No public answer key exists for this SANS sample, so instead of a self-graded score we use adversarial verification, cross-run reproduction, and disclosed misses.
 

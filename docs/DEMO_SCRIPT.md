@@ -8,9 +8,9 @@ evidence citations, and evidence-integrity proof on real SANS case data.
 Show the repository and state the case:
 
 ```text
-Protocol SIFT++ is a self-verifying autonomous DFIR analyst.
-It adds an Investigator/Skeptic correction loop and a read-only MCP forensic
-tool boundary to the Protocol SIFT idea.
+This is the autonomous DFIR agent you can defend in court: it physically cannot
+alter evidence, it catches its own hallucinations, and it shows you its accuracy,
+including its misses. Watch me prove all three.
 ```
 
 Show these files:
