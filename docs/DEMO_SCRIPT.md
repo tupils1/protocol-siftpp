@@ -1,167 +1,100 @@
-# 5-Minute Demo Script
+# 5-Minute Demo Script (read-aloud)
 
-Target: show autonomous execution, two visible self-correction iterations,
-evidence citations, and evidence-integrity proof on real SANS case data.
+Read each **SAY** line aloud; perform each **DO** action on screen. Times are
+cumulative; target ~5:00. Every command is **no-API-key** and copy-pastes from
+the README.
 
-## 0:00-0:30 Setup
+**Pre-stage (before recording):** run `uv sync`; in a second terminal start the
+GUI with `uv run siftpp-gui` (so it's instant when you switch to it); use a large
+terminal font; make sure no API key is visible on screen.
 
-Show the repository and state the case:
+---
 
-```text
-This is the autonomous DFIR agent you can defend in court: it physically cannot
-alter evidence, it catches its own hallucinations, and it shows you its accuracy,
-including its misses. Watch me prove all three.
+## 0:00-0:25 - Hook
+**DO:** Show the GitHub repo (the README scorecard at the top).
+**SAY:**
+> "This is Protocol SIFT++, an autonomous memory-forensics agent built for one
+> thing: being trustworthy enough to run unsupervised on evidence. It makes three
+> claims — it cannot alter evidence, it catches its own mistakes, and it keeps a
+> tamper-evident chain of custody. I'm going to prove all three, live, in five
+> minutes."
+
+## 0:25-1:15 - One command, everything green
+**DO:** Run:
+```bash
+uv run siftpp-verify
 ```
+**DO:** Let the `[PASS]` checklist finish.
+**SAY:**
+> "One command runs the whole proof suite. The tests pass. All three real-case
+> audit logs verify — our SANS case on Windows and on Linux, plus an independent
+> public case. The live spoliation test refused fourteen of fourteen attacks with
+> the evidence unchanged, and the tamper test caught an edited record. No API key
+> — anyone can run this from the README."
 
-Show these files:
+## 1:15-2:20 - Attack it live (the hero beat)
+**DO:** Switch to the browser at `http://127.0.0.1:8732`. Click
+**"Try to dump / delete / exfiltrate the evidence."**
+**SAY:**
+> "Most agents just promise they'll behave. Watch me try to make this one
+> misbehave. I'm telling the live server to dump memory, delete the image, run a
+> shell, and exfiltrate — everything a hijacked agent would attempt."
+**DO:** Point at the green result (14/14 refused, evidence unchanged).
+**SAY:**
+> "Fourteen of fourteen refused — because those tools physically don't exist in
+> the read-only server. The evidence's SHA-256 is identical before and after.
+> That's an architectural guarantee, not a prompt."
+**DO:** Click **"Tamper with the audit log."**
+**SAY:**
+> "Now I edit one record in the audit log. The hash chain catches it instantly,
+> broken at the exact record. That is a court-grade chain of custody."
 
-- `src/protocol_siftpp/orchestrator.py`
-- `src/protocol_siftpp/mcp_server/volatility.py`
-- `docs/ARCHITECTURE.md`
+## 2:20-3:25 - It catches its own hallucination (the flagship)
+**DO:** Open `docs/examples/srl-2018-linux/report.md`; scroll to the **Refuted** section.
+**SAY:**
+> "Here's the part I'm proudest of. On the SANS case, the agent first *confirmed*
+> a kernel rootkit — DKOM process hiding — at 0.92 confidence. It looked right:
+> the process list was empty while pool scanning found 101 processes."
+**SAY:**
+> "But on an independent re-run, the Skeptic refuted its own conclusion. It caught
+> an impossible value — zero processors — and that *every* process was missing,
+> including System. Real rootkits hide specific processes; hiding all of them
+> would crash the machine. The real answer was a Volatility symbol artifact, not a
+> rootkit. The system caught its own confident mistake. That is the whole point."
 
-## 0:30-1:15 Start Or Show The Real Run
+## 3:25-4:20 - Proven on a public answer key (M57)
+**DO:** Open `docs/examples/m57-pat-2009-12-05/report.md`.
+**SAY:**
+> "To show the accuracy isn't self-graded, we ran a second, independent, publicly
+> documented case — DigitalCorpora's M57. Its documented compromise is the
+> Advanced Keylogger, and the agent confirmed exactly that: the keylogger process
+> and its DLL injected into the Windows shell."
+**SAY:**
+> "Against that public answer key, the confirmed findings score precision and
+> recall of one-point-zero. And just as important, it refused to confirm what this
+> image can't prove — like exfiltration — leaving those as inferred. High
+> accuracy, without overstating."
 
-Run the real SANS sample command, or show the completed output if preserving
-time for the video:
-
-```powershell
-uv run siftpp-investigate `
-  --provider deepseek `
-  --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
-  --out analysis\srl-2018-base-file-memory `
-  --case-id srl-2018-base-file-memory `
-  --offline `
-  --max-iterations 3
+## 4:20-5:00 - Close
+**DO:** Run:
+```bash
+uv run python -c "from protocol_siftpp.audit import verify_chain; print(verify_chain('docs/examples/srl-2018-base-file-memory/audit.jsonl'))"
 ```
+**DO:** Show `(True, 302)`.
+**SAY:**
+> "Every finding cites the exact command and the SHA-256 of its output, written
+> into the hash-chained log you just watched verify clean. Protocol SIFT++ doesn't
+> ask you to trust it — it lets you attack it, check it, and reproduce it. That's
+> autonomous incident response a senior analyst, and a court, could actually rely
+> on. Thanks for watching."
 
-Expected final output:
+---
 
-```text
-4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.
-audit log: 302 records, hash chain OK
-outputs written to analysis\srl-2018-base-file-memory/
+## Backup beat (if a command is slow or you have spare time)
+Show the self-correction trace from the real audit log:
+```bash
+uv run python -c "import json; p='docs/examples/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
 ```
-
-Do not show API keys in the terminal.
-
-For local rehearsals only:
-
-```powershell
-uv run siftpp-demo --out analysis\demo
-```
-
-## 1:15-2:30 Show The Self-Correction
-
-Use the audit log:
-
-```powershell
-uv run python -c `
-  "import json; p='analysis/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('n'), e.get('reason'), e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
-```
-
-Point out:
-
-- `review_submitted` for `ngentask.exe` with `status=inferred`,
-  confidence `0.65`.
-- `iteration` event 202: `1 finding(s) refuted/low-confidence -> re-investigate`.
-- revised `ngentask.exe` finding, then another `status=inferred`, confidence
-  `0.55`.
-- `iteration` event 253.
-- final narrower `ngentask.exe` finding with `status=confirmed`, confidence
-  `0.85`.
-
-Narration:
-
-```text
-The first claim was not accepted because it sounded plausible.
-The Skeptic reran the tools, separated confirmed network/process facts from
-unsupported malware attribution, and forced two reinvestigation rounds.
-```
-
-## 2:30-3:45 Show The Report
-
-Open `analysis/srl-2018-base-file-memory/report.md`.
-
-Show:
-
-- 4 confirmed findings.
-- 6 inferred findings.
-- The corrected `ngentask.exe` finding.
-- Tool-output SHA-256 citations.
-- ATT&CK mappings.
-
-Key finding to narrate:
-
-```text
-The strongest corrected finding is not "ngentask.exe is definitely malware."
-It is the narrower confirmed behavior: ngentask.exe lived for one second and
-made two connections to the same 172.16.4.10:8080 destination contacted by the
-PowerShell chain.
-```
-
-## 3:45-4:30 Attack It Live (strongest segment)
-
-Don't just describe the guardrail — try to break it on camera.
-
-```powershell
-uv run siftpp-spoliation-test
-```
-
-Expected:
-
-```text
-tools exposed: 11; destructive tools exposed: 0
-destructive attempts refused: 14/14
-evidence sha256 before/after identical
-RESULT: PASS - evidence cannot be altered/dumped/exfiltrated by construction
-```
-
-Then prove the chain of custody is tamper-evident:
-
-```powershell
-uv run siftpp-tamper-test
-```
-
-Expected:
-
-```text
-verify_chain -> (True, 302)
-... tamper one record ...
-verify_chain -> (False, 152)
-RESULT: PASS - tampering detected at record 152
-```
-
-Optionally show `READ_ONLY_PLUGINS` and `stdin=subprocess.DEVNULL` in
-`src/protocol_siftpp/mcp_server/volatility.py`.
-
-Narration:
-
-```text
-I just tried to make the agent dump, delete, and exfiltrate the evidence - all
-fourteen attempts failed, because those capabilities do not exist in the server.
-Then I edited one line of the audit log and the hash chain caught it instantly.
-This is forensic defensibility you can verify, not a prompt that says be careful.
-```
-
-## 4:30-5:00 Close
-
-Show audit verification:
-
-```powershell
-uv run python -c `
-  "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
-```
-
-Expected:
-
-```text
-(True, 302)
-```
-
-Close with:
-
-```text
-Protocol SIFT++ does not rely on a prompt saying "be careful".
-It makes destructive actions unavailable, verifies every finding adversarially,
-and writes a tamper-evident evidence trail.
-```
+This prints the `ngentask.exe` correction: the Investigator over-claimed C2, the
+Skeptic downgraded it twice across two `iteration` events, and it converged on a
+narrower confirmed behavioral claim.

@@ -31,6 +31,12 @@ An independent Linux reproduction later refuted one Windows-confirmed
 manual-review proxy, the cross-run corrected confirmed set scores precision
 1.00, recall 0.75, F1 0.86.
 
+On a second, independent, *publicly documented* case (DigitalCorpora M57), the
+confirmed findings match the documented Advanced Keylogger exactly — precision,
+recall, and F1 of 1.00 against a real public answer key. A no-build local GUI
+(`uv run siftpp-gui`) lets a reviewer run the same attacks and read every report,
+and `uv run siftpp-verify` re-checks all of the above in one command.
+
 The most visible correction involved `ngentask.exe`. The Investigator initially
 overstated a malware/C2 attribution. The Skeptic downgraded it, the Investigator
 reinvestigated, the Skeptic downgraded it again, and the system finally
