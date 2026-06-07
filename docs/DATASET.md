@@ -40,7 +40,7 @@ Selection criteria:
 Download and extract:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
+uv run siftpp-download-case
 ```
 
 The command writes `evidence/srl-2018-base-file-memory/case_manifest.json` and
@@ -49,7 +49,7 @@ prints candidate extracted memory-image paths for `siftpp-investigate`.
 Run the final investigation:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
+uv run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
   --out analysis\srl-2018-base-file-memory `
@@ -130,10 +130,40 @@ unchanged: true
 audit_verify_chain: OK, 302 records
 ```
 
+## Second Dataset: DigitalCorpora M57-Patents (Public, Independent)
+
+To validate accuracy against a *public answer key* (the SANS artifact has none),
+the pipeline was re-run on a second, independent, openly-published case.
+
+- Scenario: 2009-M57-Patents (DigitalCorpora) — a public teaching corpus.
+- System / image: Pat's workstation memory, `pat-2009-12-05`.
+- Case ID: `m57-pat-2009-12-05`
+- Source: https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/
+- License: open research/education corpus (DigitalCorpora; freely redistributable).
+- Evidence type: Windows XP SP3 physical memory image.
+- Evidence SHA-256: `91df773dd3316d447661085715344e3aa58b136815698e2cc03dbffc777a9e1b`
+- Outputs: `docs/examples/m57-pat-2009-12-05/` (report.md / report.json / report.html / audit.jsonl).
+
+Run summary:
+
+```text
+4 confirmed of 9 findings; 2 self-correction iteration(s); evidence integrity verified.
+audit log: 265 records, hash chain OK
+```
+
+Documented ground truth (public): the Pat system's compromise is the installed
+"Advanced Keylogger" (`ToolKeylogger.exe` + `ToolKeyloggerDLL.dll`). The agent's
+confirmed findings match it exactly — precision/recall/F1 = 1.00 on the confirmed
+set (see `ACCURACY_REPORT.md` -> "M57 Cross-Check"). `vol_netscan` is unsupported
+on this Windows XP SP3 image, so the agent correctly kept exfiltration claims at
+`inferred` rather than confirming them.
+
 ## Ground Truth Notes
 
-No public official answer key was found for this exact artifact. The final
-accuracy report therefore uses:
+No public official answer key was found for the SANS `base-file-memory` artifact,
+so its accuracy uses a manual-review proxy (above). The independent M57 case
+*does* have a documented public ground truth (the Advanced Keylogger), giving a
+real answer-key score. The accuracy report therefore uses:
 
 - manual Volatility review,
 - the Skeptic agent's independent tool re-runs,

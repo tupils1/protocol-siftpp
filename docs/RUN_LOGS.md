@@ -51,7 +51,7 @@ review_submitted: narrowed ngentask.exe behavior claim -> confirmed, confidence 
 ## Verify The Hash Chain
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 
@@ -74,7 +74,7 @@ unchanged: true
 ## Extract A Short Demo View
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "import json; p='analysis/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('n'), e.get('reason'), e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
 ```
 

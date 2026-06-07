@@ -156,26 +156,26 @@ read-only Volatility tools and checks evidence integrity around every tool call.
 Install dependencies with `uv`, then run the deterministic local demo:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
+uv run siftpp-demo
 ```
 
 Prove the forensic guardrails by attacking them (no key needed):
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
+uv run siftpp-spoliation-test
+uv run siftpp-tamper-test
 ```
 
 Download the selected SANS case:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
+uv run siftpp-download-case
 ```
 
 Run the real investigation with DeepSeek:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
+uv run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
   --out analysis\srl-2018-base-file-memory `
@@ -199,7 +199,7 @@ The real run writes:
 Verify the audit chain:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 
@@ -223,8 +223,8 @@ Expected:
 ## Development Checks
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run pytest
-C:\Users\Administrator\.local\bin\uv.exe run ruff check .
+uv run pytest
+uv run ruff check .
 ```
 
 ## License

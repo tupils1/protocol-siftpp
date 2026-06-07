@@ -25,7 +25,7 @@ Run the real SANS sample command, or show the completed output if preserving
 time for the video:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
+uv run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
   --out analysis\srl-2018-base-file-memory `
@@ -47,7 +47,7 @@ Do not show API keys in the terminal.
 For local rehearsals only:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo --out analysis\demo
+uv run siftpp-demo --out analysis\demo
 ```
 
 ## 1:15-2:30 Show The Self-Correction
@@ -55,7 +55,7 @@ C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo --out analysis\demo
 Use the audit log:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "import json; p='analysis/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('n'), e.get('reason'), e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
 ```
 
@@ -104,7 +104,7 @@ PowerShell chain.
 Don't just describe the guardrail — try to break it on camera.
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
+uv run siftpp-spoliation-test
 ```
 
 Expected:
@@ -119,7 +119,7 @@ RESULT: PASS - evidence cannot be altered/dumped/exfiltrated by construction
 Then prove the chain of custody is tamper-evident:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
+uv run siftpp-tamper-test
 ```
 
 Expected:
@@ -148,7 +148,7 @@ This is forensic defensibility you can verify, not a prompt that says be careful
 Show audit verification:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 

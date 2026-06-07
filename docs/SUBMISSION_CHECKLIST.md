@@ -34,11 +34,11 @@ Use this before submitting on Devpost.
 ## Final Local Checks
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run pytest
-C:\Users\Administrator\.local\bin\uv.exe run ruff check .
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run pytest
+uv run ruff check .
+uv run siftpp-spoliation-test
+uv run siftpp-tamper-test
+uv run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 

@@ -16,7 +16,7 @@ Command form by platform:
 
 ```powershell
 # Windows
-C:\Users\Administrator\.local\bin\uv.exe run <command>
+uv run <command>
 ```
 
 ```bash
@@ -27,8 +27,8 @@ uv run <command>
 On Windows, this project was verified with:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run pytest
-C:\Users\Administrator\.local\bin\uv.exe run ruff check .
+uv run pytest
+uv run ruff check .
 ```
 
 ## Docker Quick Check (no API key)
@@ -103,7 +103,7 @@ Run this first to verify the self-correction loop, report writer, and
 tamper-evident audit log:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-demo
+uv run siftpp-demo
 ```
 
 Linux / SANS SIFT:
@@ -137,8 +137,8 @@ proves the self-correction loop without a paid model or real evidence.
 Two reproducible tests prove the safety properties by attacking them:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-spoliation-test
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-tamper-test
+uv run siftpp-spoliation-test
+uv run siftpp-tamper-test
 ```
 
 Linux / SANS SIFT:
@@ -161,7 +161,7 @@ Both run on the real SANS artifacts when present, otherwise on a synthetic file.
 Download the selected SANS case:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-download-case
+uv run siftpp-download-case
 ```
 
 Linux / SANS SIFT:
@@ -192,7 +192,7 @@ SIFTPP_LLM_PROVIDER=deepseek
 Run:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run siftpp-investigate `
+uv run siftpp-investigate `
   --provider deepseek `
   --evidence evidence\srl-2018-base-file-memory\extracted\base-file-memory.img `
   --out analysis\srl-2018-base-file-memory `
@@ -219,7 +219,7 @@ Outputs:
 Verify the audit hash chain:
 
 ```powershell
-C:\Users\Administrator\.local\bin\uv.exe run python -c `
+uv run python -c `
   "from protocol_siftpp.audit import verify_chain; print(verify_chain('analysis/srl-2018-base-file-memory/audit.jsonl'))"
 ```
 
