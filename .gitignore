@@ -33,5 +33,8 @@ reports/
 exports/
 *.log
 
+# Local preview tooling (machine-specific paths)
+.claude/launch.json
+
 # OS
 .DS_Store
