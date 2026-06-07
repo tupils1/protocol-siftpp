@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocol SIFT++ — m57-pat-2009-12-05</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body { font: 15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; margin: 0; background:#f6f8fa; color:#1f2328; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+header h1 { margin:0 0 4px; font-size: 24px; }
+.sub { color:#57606a; font-size: 13px; }
+.meta { margin:14px 0; padding:12px 14px; background:#fff; border:1px solid #d0d7de; border-radius:10px; font-size:13px; }
+.meta code { word-break: break-all; }
+.pill { display:inline-block; padding:2px 10px; border-radius:999px; font-weight:600; font-size:12px; color:#fff; }
+.pill.ok { background:#1a7f37; } .pill.bad { background:#cf222e; }
+.stats { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 24px; }
+.stat { flex:1 1 120px; background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px; text-align:center; }
+.stat .num { font-size:24px; font-weight:700; } .stat .lbl { font-size:11px; color:#57606a; text-transform:uppercase; letter-spacing:.04em; }
+.summary { background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px 14px; margin-bottom:20px; }
+h2 { font-size:16px; margin:24px 0 10px; }
+.card { background:#fff; border:1px solid #d0d7de; border-left:5px solid #57606a; border-radius:10px; padding:14px 16px; margin:10px 0; }
+.cardtop { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.badge { color:#fff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:6px; }
+.sev { font-size:12px; color:#57606a; text-transform:uppercase; }
+.bar { position:relative; flex:1 1 140px; height:16px; background:#eaeef2; border-radius:8px; min-width:120px; overflow:hidden; }
+.bar .fill { height:100%; }
+.bar .barlbl { position:absolute; right:6px; top:0; font-size:11px; line-height:16px; color:#1f2328; }
+.claim { font-weight:600; margin-bottom:6px; }
+.chip { display:inline-block; background:#ddf4ff; color:#0969da; border-radius:6px; padding:1px 7px; font-size:11px; margin:2px 4px 2px 0; }
+.skeptic { background:#fff8c5; border:1px solid #eac54f; border-radius:8px; padding:8px 10px; font-size:13px; margin:8px 0; }
+.ev { margin:8px 0 0; padding-left:18px; font-size:12px; }
+.hash { color:#57606a; font-family:ui-monospace,Menlo,Consolas,monospace; }
+code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+footer { margin-top:30px; color:#57606a; font-size:12px; text-align:center; }
+</style></head>
+<body><div class="wrap">
+<header>
+  <h1>Protocol SIFT++ — Incident Report</h1>
+  <div class="sub">Self-verifying autonomous DFIR · case <b>m57-pat-2009-12-05</b></div>
+</header>
+<div class="meta">
+  Evidence: <code>C:\Users\Administrator\find-evil\evidence\m57-pat-2009-12-05\extracted\pat-2009-12-05.winddramimage</code><br>
+  Evidence SHA-256: <code>91df773dd3316d447661085715344e3aa58b136815698e2cc03dbffc777a9e1b</code><br>
+  <span class="pill ok">audit hash chain OK · 265 records</span>
+</div>
+<div class="stats"><div class="stat"><div class="num">4</div><div class="lbl">confirmed</div></div><div class="stat"><div class="num">4</div><div class="lbl">inferred</div></div><div class="stat"><div class="num">1</div><div class="lbl">refuted</div></div><div class="stat"><div class="num">2</div><div class="lbl">iterations</div></div><div class="stat"><div class="num">92</div><div class="lbl">model_calls</div></div><div class="stat"><div class="num">133</div><div class="lbl">tool_calls</div></div></div>
+<div class="summary"><b>Summary.</b> 4 confirmed of 9 findings; 2 self-correction iteration(s); evidence integrity verified.</div>
+<h2 style="color:#1a7f37">Confirmed (4)</h2>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:95%;background:#1a7f37"></div><span class="barlbl">0.95</span></div>
+      </div>
+      <div class="claim">ToolKeyloggerDLL.dll is injected into explorer.exe (PID 168) at base address 0x10000000. The DLL is loaded from C:\Program Files\XP Advanced\DLLs\ToolKeyloggerDLL.dll with LoadCount=1, indicating it was deliberately injected rather than loaded as a normal shared dependency. Explorer.exe is the Windows shell — injecting a keylogging DLL here allows the malware to intercept keystrokes and window messages across the entire user session.</div>
+      <div class="atk"><span class="chip">T1055.001</span><span class="chip">T1056.001</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.95):</b> The core factual claims are directly confirmed by the raw evidence: ToolKeyloggerDLL.dll is loaded in explorer.exe (PID 168) at base 0x10000000 (268435456 decimal), from path C:\Program Files\XP Advanced\DLLs\ToolKeyloggerDLL.dll, with LoadCount=1. The LoadCount of 1 (versus -1 for static imports) indicates dynamic loading via LoadLibrary, which in context of a process named ToolKeylogger.exe running as a child of explorer.exe strongly supports the injection interpretation. Malfind showed no RWX regions, but that is expected for LoadLibrary-based injection which retains file backing. The Windows shell context and keylogging implication is a standard and accurate analytical assessment. The only minor caveat is that the exact injection mechanism (CreateRemoteThread vs AppInit_DLLs vs SetWindowsHookEx) is not directly evidenced, but the loading itself is unequivocal.</div>
+      <ul class="ev"><li><code>vol_dlllist</code> <span class="hash">sha256 7ee3c22e0c1c453a…</span></li><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:85%;background:#1a7f37"></div><span class="barlbl">0.85</span></div>
+      </div>
+      <div class="claim">PID 280 (ToolKeylogger.exe, path C:\Program Files\XP Advanced\ToolKeylogger.exe) is a child process of explorer.exe (PID 168). Explorer.exe started at 02:11:20 UTC; ToolKeylogger.exe started at 02:11:23 UTC — a 3-second delta consistent with user-logon autostart execution. However, the specific persistence mechanism (e.g., registry Run keys, Startup folder) cannot be determined from memory alone — no registry analysis tools are available, and the command line contains no switches or parent-process evidence pointing to a specific autostart location.</div>
+      <div class="atk"><span class="chip">T1547.001</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.85):</b> Every directly observable element is corroborated by multiple independent Volatility plugins. The parent-child relationship (PID 280 → PPID 168), the 3-second CreateTime delta, the executable path, and the empty command line are all confirmed by pslist, pstree, cmdline, and psscan. The &quot;autostart&quot; label is an inference but a well-supported one given the batch-launch pattern at 02:11:23 across six explorer.exe children. The investigator&#x27;s own acknowledgment that the precise persistence mechanism cannot be determined without registry tools is honest and correct. One minor note: pslist truncates the ImageFileName to &quot;ToolKeylogger.e&quot; (14-char EPROCESS limit on XP), but the full name is confirmed by both pstree (Path) and dlllist (Name/Path). This does not weaken the finding.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 6265a576df08049c…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 4022f8c40da55b82…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:90%;background:#1a7f37"></div><span class="barlbl">0.90</span></div>
+      </div>
+      <div class="claim">No hidden or unlinked processes were detected: vol_pslist returned 33 active processes and vol_psscan also returned 33, with identical PIDs in both outputs. No terminated or pool-only remnants of additional malware processes were found. However, vol_malfind for PID 168 (explorer.exe) returned zero results, meaning the claim of &quot;injected code&quot; in explorer.exe is directly refuted. ToolKeyloggerDLL.dll is loaded in explorer.exe (Base 0x10000000, Path C:\Program Files\XP Advanced\DLLs\ToolKeyloggerDLL.dll, Size 192512) as a normally-backed module — this is a legitimate loaded DLL (not code injection via RWX private regions). The same DLL is also loaded in PID 280 (ToolKeylogger.exe). This means the keylogger DLL is present in the shell process via normal loading, not injection. vol_netscan is completely broken on this XP image and vol_malfind crashes for PID 280 (VAD tree too deep).</div>
+      <div class="atk"><span class="chip">T1055</span><span class="chip">T1120</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.90):</b> Every factual sub-claim checks out against independent tool runs: (1) pslist/psscan both yield 33 identical PIDs with no pool-only remnants; (2) vol_malfind for PID 168 returns zero results; (3) ToolKeyloggerDLL.dll in explorer.exe is file-backed at 0x10000000, not a private RWX region; (4) the same DLL is file-backed in PID 280; (5) netscan crashes with NotImplementedError on this XP image; (6) malfind for PID 280 crashes with &quot;Vad tree is too deep.&quot; The only caveat is that malfind&#x27;s emptiness does not rule out all injection techniques (e.g., reflective DLL injection, hooking), so the word &quot;refuted&quot; is scoped to malfind-style private-RWX injection. That nuance accounts for the 0.90 rather than 1.0 confidence.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 e95531207f893372…</span></li><li><code>vol_malfind</code> <span class="hash">sha256 7eb70257593da06f…</span></li><li><code>vol_dlllist</code> <span class="hash">sha256 fe2a17f18bf471ec…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 7eb70257593da06f…</span></li><li><code>vol_svcscan</code> <span class="hash">sha256 929941027717a07d…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#0969da">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">low</span>
+        <div class="bar"><div class="fill" style="width:92%;background:#1a7f37"></div><span class="barlbl">0.92</span></div>
+      </div>
+      <div class="claim">PID 280 (ToolKeylogger.exe from &quot;C:\Program Files\XP Advanced\&quot;) loads WinSock (ws2_32.dll, WS2HELP.dll) and the WinINet HTTP/HTTPS client stack (WININET.dll, urlmon.dll, iertutil.dll), giving the process TCP/IP networking and HTTP communication capability. It also loads ieframe.dll (IE browser frame container for embedded browser UI) and msxml3.dll (XML parsing). The process loads vendor-ecosystem DLLs: ToolKeyloggerDLL.dll (core keylogging), SkinMagic.dll (UI skinning), and LicenseManager.dll from XPToolsLicenseComponent (license validation — same &quot;XPTools&quot;/&quot;XP Advanced&quot; vendor suite). No actual network connections, remote endpoints, or data exfiltration can be confirmed: vol_netscan is incompatible with Windows XP SP3 (raises NotImplementedError), and vol_malfind fails with a VAD tree depth error. The DLL evidence demonstrates networking and keylogging capability but does not prove active C2 or exfiltration.</div>
+      <div class="atk"><span class="chip">T1056.001</span><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.92):</b> Every factual claim about loaded DLLs (names, paths, PIDs) is directly corroborated by my independent vol_dlllist run. The tool failures (netscan NotImplementedError, malfind VAD tree depth) are also independently verified. The interpretive labels (e.g., &quot;core keylogging&quot;, &quot;UI skinning&quot;, &quot;license validation&quot;, &quot;vendor suite&quot;) are reasonable inferences from the DLL names and install paths but not independently proven — however, the analyst explicitly frames these as capability evidence, not proof of activity, and correctly notes the absence of exfiltration proof. Confidence is slightly reduced (0.92 vs 0.85) only because &quot;core keylogging&quot; from ToolKeyloggerDLL.dll is a name-based inference without behavioral confirmation, but the overall finding remains solidly supported.</div>
+      <ul class="ev"><li><code>vol_dlllist</code> <span class="hash">sha256 0dcd2a46810ccbef…</span></li><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 6265a576df08049c…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 4022f8c40da55b82…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 7eb70257593da06f…</span></li><li><code>vol_malfind</code> <span class="hash">sha256 7eb70257593da06f…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 e95531207f893372…</span></li></ul>
+    </div><h2 style="color:#9a6700">Inferred (4)</h2>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:75%;background:#9a6700"></div><span class="barlbl">0.75</span></div>
+      </div>
+      <div class="claim">PID 280 (ToolKeylogger.e / ToolKeylogger.exe) is a malicious keylogger process running from C:\Program Files\XP Advanced\ToolKeylogger.exe. Its ImageFileName is truncated to 14 chars in the EPROCESS structure. It loads a dedicated keylogging DLL (ToolKeyloggerDLL.dll), a UI skinning library (SkinMagic.dll), and a license manager from XPToolsLicenseComponent. The process has 675 handles, unusually high for a user application. It was launched by explorer.exe (PID 168).</div>
+      <div class="atk"><span class="chip">T1056.001</span><span class="chip">T1056</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.75):</b> The core factual claims (PID, path, DLLs, parent, handle count, EPROCESS truncation) are all directly supported by the raw evidence and therefore not refuted. However, the &quot;malicious&quot; classification requires an inference about intent and authorization that memory forensics alone cannot prove — this is a commercial-grade keylogger with a licensing component, not necessarily malware. The &quot;unusually high handles&quot; characterization is borderline. Overall, the finding is plausible and well-supported factually, but falls short of &quot;confirmed&quot; on the interpretive elements. Confidence 0.75 reflects high agreement on the facts, moderate on the interpretation.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 6265a576df08049c…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 4022f8c40da55b82…</span></li><li><code>vol_dlllist</code> <span class="hash">sha256 7ee3c22e0c1c453a…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:60%;background:#9a6700"></div><span class="barlbl">0.60</span></div>
+      </div>
+      <div class="claim">The ToolKeylogger malware has network exfiltration capability. PID 280 loads ws2_32.dll and WS2HELP.dll (Windows Sockets API) plus WININET.dll, urlmon.dll, iertutil.dll, and ieframe.dll (Internet Explorer HTTP/HTTPS stack). This combination enables the keylogger to exfiltrate captured keystrokes to a remote server over HTTP or raw TCP sockets. Network connection data is unavailable due to vol_netscan incompatibility with Windows XP SP3.</div>
+      <div class="atk"><span class="chip">T1041</span><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.60):</b> The DLL loading facts are correct: PID 280 (ToolKeylogger.exe) does load ws2_32.dll, WS2HELP.dll, WININET.dll, urlmon.dll, iertutil.dll, and ieframe.dll. These provide Windows Sockets and IE HTTP/HTTPS capabilities. However, the claim that this combination &quot;enables the keylogger to exfiltrate captured keystrokes to a remote server&quot; is an inference, not directly shown by the DLL evidence alone. Loading networking DLLs demonstrates networking *capability*, not exfiltration *behavior*. Alternative benign explanations exist (license validation, GUI-embedded browser, update checks). The netscan incompatibility means we cannot confirm or refute actual network connections. Confidence is moderate (0.60): the DLL presence is solidly confirmed, but the exfiltration purpose remains speculative without connection data or behavioral evidence.</div>
+      <ul class="ev"><li><code>vol_dlllist</code> <span class="hash">sha256 7ee3c22e0c1c453a…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 7eb70257593da06f…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:55%;background:#9a6700"></div><span class="barlbl">0.55</span></div>
+      </div>
+      <div class="claim">The ToolKeylogger achieves user-mode persistence by launching as a child process of explorer.exe (PID 168). Explorer.exe is the Windows shell, and child processes spawned by it at user login typically originate from registry Run keys (HKLM/HKCU\Software\Microsoft\Windows\CurrentVersion\Run) or the Startup folder. The keylogger process was created at 2009-12-05T02:11:23, approximately 21 seconds after explorer.exe started (02:11:20), consistent with autostart execution at user logon.</div>
+      <div class="atk"><span class="chip">T1547.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.55):</b> The claim has two parts: (a) ToolKeylogger is a child of explorer.exe launched near logon — this is directly supported. (b) The persistence mechanism is specifically registry Run keys or Startup folder — this is NOT supported by the cited tools and is pure inference. The investigator also miscalculated the time delta (3s, not 21s). The finding is plausible (autostart is a reasonable guess) but not directly evidenced, so it&#x27;s inferred rather than confirmed. Confidence is moderate (0.55) because the factual error and unsupported leap on mechanism reduce trust in the analysis.</div>
+      <ul class="ev"><li><code>vol_pstree</code> <span class="hash">sha256 6265a576df08049c…</span></li><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 4022f8c40da55b82…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:60%;background:#9a6700"></div><span class="barlbl">0.60</span></div>
+      </div>
+      <div class="claim">PID 280 (ToolKeylogger.exe) loads the Windows Sockets API stack (ws2_32.dll, WS2HELP.dll) and the Internet Explorer HTTP/HTTPS stack (WININET.dll, urlmon.dll, iertutil.dll, ieframe.dll), demonstrating the process has networking and HTTP communication capability. However, vol_netscan is incompatible with Windows XP SP3 and fails entirely — no actual network connections, remote endpoints, or exfiltration behavior can be confirmed or refuted. The presence of LicenseManager.dll (XPToolsLicenseComponent) provides a benign alternative explanation for network capability (license validation).</div>
+      <div class="atk"><span class="chip">T1071.001</span><span class="chip">T1041</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.60):</b> The raw DLL-loading facts are directly supported by vol_dlllist output and the netscan failure is confirmed. However, the characterization of LicenseManager.dll as a &quot;benign alternative explanation&quot; is misleading — it lives in XPToolsLicenseComponent, almost certainly the same vendor (&quot;XP Advanced&quot; / &quot;XPTools&quot;) that ships the keylogger. This makes it part of the same software ecosystem, not an independent benign factor. Additionally, ieframe.dll (11 MB, IE frame/window container) is mischaracterized as part of the &quot;HTTP/HTTPS stack&quot; — it is primarily a browser UI framework, though it ships with IE. The severity of &quot;medium&quot; is questionable given zero confirmed network connections (netscan inoperable on XP SP3) and no evidence of actual data exfiltration. The core factual observations are correct but the interpretive framing inflates the threat level.</div>
+      <ul class="ev"><li><code>vol_dlllist</code> <span class="hash">sha256 fe2a17f18bf471ec…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 7eb70257593da06f…</span></li><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 4022f8c40da55b82…</span></li></ul>
+    </div><h2 style="color:#cf222e">Refuted (1)</h2>
+    <div class="card" style="border-left-color:#57606a">
+      <div class="cardtop">
+        <span class="badge" style="background:#cf222e">REFUTED</span>
+        <span class="sev">info</span>
+        <div class="bar"><div class="fill" style="width:65%;background:#9a6700"></div><span class="barlbl">0.65</span></div>
+      </div>
+      <div class="claim">No hidden or unlinked processes were detected. vol_psscan returned 33 processes, matching vol_pslist&#x27;s 33 exactly. All processes visible in the active process list were also found by pool scanning, and no terminated/hidden remnants of additional malware processes were discovered. The compromise is confined to the ToolKeylogger family (ToolKeylogger.exe PID 280 and its injected DLL in explorer.exe PID 168). No malicious Windows services related to the keylogger were found in the 234 services enumerated by vol_svcscan.</div>
+      <div class="atk"></div>
+      <div class="skeptic"><b>Skeptic (refuted, 0.65):</b> The finding makes three sub-claims, of which one is directly refuted: the &quot;injected DLL&quot; in explorer.exe. Malfind returned zero results for PID 168 — ToolKeyloggerDLL.dll is a normally loaded module with disk backing, not injected code. This materially changes the nature of the compromise assessment. The pslist/psscan parity claim (no hidden processes) is confirmed. The svcscan claim about no malicious services is partially verifiable but not fully confirmable due to truncation, and netscan failed entirely. Given the core &quot;injection&quot; assertion is wrong and two tools produced errors/gaps, the overall confidence must be downgraded and the claim marked as refuted in its current form.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 5c9aae21c57472b4…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 e95531207f893372…</span></li><li><code>vol_svcscan</code> <span class="hash">sha256 929941027717a07d…</span></li></ul>
+    </div>
+<footer>Generated from report.json + audit.jsonl · findings are confirmed/inferred/refuted by an adversarial Skeptic; every finding cites a tool command + output SHA-256.</footer>
+</div></body></html>

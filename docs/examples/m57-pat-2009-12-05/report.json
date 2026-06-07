@@ -1,0 +1,772 @@
+{
+  "case_id": "m57-pat-2009-12-05",
+  "evidence_path": "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+  "evidence_sha256": "91df773dd3316d447661085715344e3aa58b136815698e2cc03dbffc777a9e1b",
+  "findings": [
+    {
+      "id": "f02f05640d8a",
+      "claim": "PID 280 (ToolKeylogger.e / ToolKeylogger.exe) is a malicious keylogger process running from C:\\Program Files\\XP Advanced\\ToolKeylogger.exe. Its ImageFileName is truncated to 14 chars in the EPROCESS structure. It loads a dedicated keylogging DLL (ToolKeyloggerDLL.dll), a UI skinning library (SkinMagic.dll), and a license manager from XPToolsLicenseComponent. The process has 675 handles, unusually high for a user application. It was launched by explorer.exe (PID 168).",
+      "severity": "critical",
+      "confidence": 0.75,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:32:09.514733Z"
+        },
+        {
+          "tool": "vol_pstree",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pstree"
+          ],
+          "output_excerpt": "[{\"Audit\": null, \"Cmd\": null, \"CreateTime\": null, \"ExitTime\": null, \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"Path\": null, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": [{\"Audit\": \"\\\\Device\\\\HarddiskVolume1\\\\WINDOWS\\\\system32\\\\smss.exe\", \"Cmd\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\"",
+          "output_sha256": "6265a576df08049c5ec20bf0f504eb2da1998d3cf2de2b71cd82063f6753c438",
+          "output_bytes": 21217,
+          "ran_at": "2026-06-07T10:32:10.771487Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[{\"Args\": null, \"PID\": 4, \"Process\": \"System\", \"__children\": []}, {\"Args\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"PID\": 576, \"Process\": \"smss.exe\", \"__children\": []}, {\"Args\": \"C:\\\\WINDOWS\\\\system32\\\\csrss.exe ObjectDirectory=\\\\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitializ",
+          "output_sha256": "4022f8c40da55b82171d1d4d9709ab1aa91bbb7fb2de3ca24fdfb41c399b4aae",
+          "output_bytes": 5131,
+          "ran_at": "2026-06-07T10:32:15.400525Z"
+        },
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "1048"
+          ],
+          "output_excerpt": "[{\"Base\": 16777216, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"svchost.exe\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\System32\\\\svchost.exe\", \"Process\": \"svchost.exe\", \"Size\": 24576, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdll.dll\", \"Process\": \"svc",
+          "output_sha256": "7ee3c22e0c1c453a5e819c4fae166179c8870369ccb874474027f225658ecab6",
+          "output_bytes": 45348,
+          "ran_at": "2026-06-07T10:33:27.956527Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1056.001",
+        "T1056"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.75,
+        "refutation_attempt": "I independently re-ran pslist, pstree, cmdline, dlllist, psscan, svcscan, and malfind (which crashed due to VAD tree depth bug on this XP SP3 image), plus netscan (unsupported on this OS version). All factual claims about PID 280 check out: ImageFileName truncated to 14 chars (\"ToolKeylogger.e\"), full path C:\\Program Files\\XP Advanced\\ToolKeylogger.exe, PPID 168 (explorer.exe), 675 handles, DLLs ToolKeyloggerDLL.dll, SkinMagic.dll, and LicenseManager.dll from XPToolsLicenseComponent all confirmed.\n\nI attempted to refute three interpretive elements:\n1. \"Malicious\" label: The software is clearly a keylogger by name and dedicated DLL, but it installs in a standard Program Files directory, includes a commercial license manager, a UI skinning library, runs with only 2 threads, is not hidden from psscan, and has no service persistence. These are hallmarks of commercial/parental monitoring software rather than stealth malware. \"Malicious\" is a judgment call the evidence alone does not settle.\n2. \"675 handles, unusually high\": explorer.exe (PID 168) has 673 handles — nearly identical. Several svchost instances exceed this. For a 2-thread application 675 is somewhat elevated, but calling it \"unusually high for a user application\" is debatable when explorer.exe itself is comparable.\n3. Investigator confidence of 1.00 is overstated given that netscan couldn't even run to check for data exfiltration, and malfind crashed — critical gaps in the analysis.",
+        "rationale": "The core factual claims (PID, path, DLLs, parent, handle count, EPROCESS truncation) are all directly supported by the raw evidence and therefore not refuted. However, the \"malicious\" classification requires an inference about intent and authorization that memory forensics alone cannot prove — this is a commercial-grade keylogger with a licensing component, not necessarily malware. The \"unusually high handles\" characterization is borderline. Overall, the finding is plausible and well-supported factually, but falls short of \"confirmed\" on the interpretive elements. Confidence 0.75 reflects high agreement on the facts, moderate on the interpretation.",
+        "reviewed_at": "2026-06-07T10:36:32.161878Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-07T10:34:02.111479Z",
+      "updated_at": "2026-06-07T10:36:44.875805Z"
+    },
+    {
+      "id": "9b353950ad1d",
+      "claim": "ToolKeyloggerDLL.dll is injected into explorer.exe (PID 168) at base address 0x10000000. The DLL is loaded from C:\\Program Files\\XP Advanced\\DLLs\\ToolKeyloggerDLL.dll with LoadCount=1, indicating it was deliberately injected rather than loaded as a normal shared dependency. Explorer.exe is the Windows shell — injecting a keylogging DLL here allows the malware to intercept keystrokes and window messages across the entire user session.",
+      "severity": "critical",
+      "confidence": 0.95,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "1048"
+          ],
+          "output_excerpt": "[{\"Base\": 16777216, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"svchost.exe\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\System32\\\\svchost.exe\", \"Process\": \"svchost.exe\", \"Size\": 24576, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdll.dll\", \"Process\": \"svc",
+          "output_sha256": "7ee3c22e0c1c453a5e819c4fae166179c8870369ccb874474027f225658ecab6",
+          "output_bytes": 45348,
+          "ran_at": "2026-06-07T10:33:27.956527Z"
+        },
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:32:09.514733Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1055.001",
+        "T1056.001"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.95,
+        "refutation_attempt": "I independently re-ran vol_dlllist --pid 168, vol_pslist, vol_psscan, vol_malfind, vol_dlllist --pid 280, vol_cmdline, and vol_pstree to attempt to disprove each part of the claim. I checked whether: (1) the DLL could be loaded at a different base address (it is exactly 0x10000000 = 268435456); (2) the DLL might be in a different process (confirmed PID 168 explorer.exe); (3) LoadCount=-1 would contradict the injection claim (it's 1, consistent with dynamic loading); (4) malfind might show no injection artifacts (malfind returned empty, but LoadLibrary injection has file backing and won't trigger malfind); (5) the DLL path could be legitimate (path C:\\Program Files\\XP Advanced\\DLLs\\ToolKeyloggerDLL.dll is clearly non-standard). I also checked the sibling process ToolKeylogger.exe (PID 280) which loads the same DLL at a different base with LoadCount=2, and runs as a child of explorer.exe, corroborating the malicious context. I could not find disconfirming evidence.",
+        "rationale": "The core factual claims are directly confirmed by the raw evidence: ToolKeyloggerDLL.dll is loaded in explorer.exe (PID 168) at base 0x10000000 (268435456 decimal), from path C:\\Program Files\\XP Advanced\\DLLs\\ToolKeyloggerDLL.dll, with LoadCount=1. The LoadCount of 1 (versus -1 for static imports) indicates dynamic loading via LoadLibrary, which in context of a process named ToolKeylogger.exe running as a child of explorer.exe strongly supports the injection interpretation. Malfind showed no RWX regions, but that is expected for LoadLibrary-based injection which retains file backing. The Windows shell context and keylogging implication is a standard and accurate analytical assessment. The only minor caveat is that the exact injection mechanism (CreateRemoteThread vs AppInit_DLLs vs SetWindowsHookEx) is not directly evidenced, but the loading itself is unequivocal.",
+        "reviewed_at": "2026-06-07T10:38:22.918346Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-07T10:34:08.890114Z",
+      "updated_at": "2026-06-07T10:38:42.205219Z"
+    },
+    {
+      "id": "1b2c4f38464f",
+      "claim": "The ToolKeylogger malware has network exfiltration capability. PID 280 loads ws2_32.dll and WS2HELP.dll (Windows Sockets API) plus WININET.dll, urlmon.dll, iertutil.dll, and ieframe.dll (Internet Explorer HTTP/HTTPS stack). This combination enables the keylogger to exfiltrate captured keystrokes to a remote server over HTTP or raw TCP sockets. Network connection data is unavailable due to vol_netscan incompatibility with Windows XP SP3.",
+      "severity": "high",
+      "confidence": 0.6,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "1048"
+          ],
+          "output_excerpt": "[{\"Base\": 16777216, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"svchost.exe\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\System32\\\\svchost.exe\", \"Process\": \"svchost.exe\", \"Size\": 24576, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 1048, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdll.dll\", \"Process\": \"svc",
+          "output_sha256": "7ee3c22e0c1c453a5e819c4fae166179c8870369ccb874474027f225658ecab6",
+          "output_bytes": 45348,
+          "ran_at": "2026-06-07T10:33:27.956527Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.netscan"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:32:14.210741Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1041",
+        "T1071.001"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.6,
+        "refutation_attempt": "1. Re-ran vol_dlllist --pid 280 independently: confirmed ws2_32.dll, WS2HELP.dll, WININET.dll, urlmon.dll, iertutil.dll, and ieframe.dll are loaded. 2. Verified vol_netscan fails with \"NotImplementedError: This version of Windows is not supported: 5.1 15.2600!\" — network connection data truly unavailable. 3. Checked for alternative explanations: (a) ToolKeylogger.exe resides in C:\\Program Files\\XP Advanced\\ and loads SkinMagic.dll (GUI skinning) and LicenseManager.dll — this is a commercial keylogger with a visible UI, not stealth malware; (b) ieframe.dll (11 MB IE browser frame) is commonly loaded to embed a web browser control in a GUI (e.g., for help pages, registration forms, license checks), not necessarily for data exfiltration; (c) the IE HTTP stack (WININET/urlmon/iertutil) could serve update checks or license validation rather than keystroke exfiltration. 4. No network connection evidence exists to confirm active exfiltration. 5. The investigator's attached evidence showed only svchost.exe (PID 1048) in the dlllist snippet, not PID 280 — though the full dlllist output does contain the claimed DLLs for PID 280.",
+        "rationale": "The DLL loading facts are correct: PID 280 (ToolKeylogger.exe) does load ws2_32.dll, WS2HELP.dll, WININET.dll, urlmon.dll, iertutil.dll, and ieframe.dll. These provide Windows Sockets and IE HTTP/HTTPS capabilities. However, the claim that this combination \"enables the keylogger to exfiltrate captured keystrokes to a remote server\" is an inference, not directly shown by the DLL evidence alone. Loading networking DLLs demonstrates networking *capability*, not exfiltration *behavior*. Alternative benign explanations exist (license validation, GUI-embedded browser, update checks). The netscan incompatibility means we cannot confirm or refute actual network connections. Confidence is moderate (0.60): the DLL presence is solidly confirmed, but the exfiltration purpose remains speculative without connection data or behavioral evidence.",
+        "reviewed_at": "2026-06-07T10:40:12.784113Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-07T10:34:16.609536Z",
+      "updated_at": "2026-06-07T10:40:23.739630Z"
+    },
+    {
+      "id": "4ad8610b5c0e",
+      "claim": "The ToolKeylogger achieves user-mode persistence by launching as a child process of explorer.exe (PID 168). Explorer.exe is the Windows shell, and child processes spawned by it at user login typically originate from registry Run keys (HKLM/HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run) or the Startup folder. The keylogger process was created at 2009-12-05T02:11:23, approximately 21 seconds after explorer.exe started (02:11:20), consistent with autostart execution at user logon.",
+      "severity": "high",
+      "confidence": 0.55,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_pstree",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pstree"
+          ],
+          "output_excerpt": "[{\"Audit\": null, \"Cmd\": null, \"CreateTime\": null, \"ExitTime\": null, \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"Path\": null, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": [{\"Audit\": \"\\\\Device\\\\HarddiskVolume1\\\\WINDOWS\\\\system32\\\\smss.exe\", \"Cmd\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\"",
+          "output_sha256": "6265a576df08049c5ec20bf0f504eb2da1998d3cf2de2b71cd82063f6753c438",
+          "output_bytes": 21217,
+          "ran_at": "2026-06-07T10:32:10.771487Z"
+        },
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:32:09.514733Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[{\"Args\": null, \"PID\": 4, \"Process\": \"System\", \"__children\": []}, {\"Args\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"PID\": 576, \"Process\": \"smss.exe\", \"__children\": []}, {\"Args\": \"C:\\\\WINDOWS\\\\system32\\\\csrss.exe ObjectDirectory=\\\\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitializ",
+          "output_sha256": "4022f8c40da55b82171d1d4d9709ab1aa91bbb7fb2de3ca24fdfb41c399b4aae",
+          "output_bytes": 5131,
+          "ran_at": "2026-06-07T10:32:15.400525Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1547.001"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.55,
+        "refutation_attempt": "1. Re-ran pslist, pstree, cmdline independently. Confirmed ToolKeylogger.e (PID 280) is child of explorer.exe (PID 168). 2. Checked the timing: explorer.exe CreateTime=02:11:20, ToolKeylogger=02:11:23 — delta is 3 seconds, not 21 as claimed. The investigator's math is wrong. 3. Verified that NONE of the cited tools (pslist, pstree, cmdline) can examine registry Run keys or Startup folder — the persistence mechanism claim is pure extrapolation with no direct evidence. 4. Checked psscan — no hidden/terminated processes change the picture. 5. Reviewed dlllist for PID 280 — confirms it's a real application from C:\\Program Files\\XP Advanced\\ with network-capable DLLs, but nothing about how it was launched. 6. Multiple alternative launch mechanisms (manual double-click, COM, shell extension, scheduled task) were not excluded.",
+        "rationale": "The claim has two parts: (a) ToolKeylogger is a child of explorer.exe launched near logon — this is directly supported. (b) The persistence mechanism is specifically registry Run keys or Startup folder — this is NOT supported by the cited tools and is pure inference. The investigator also miscalculated the time delta (3s, not 21s). The finding is plausible (autostart is a reasonable guess) but not directly evidenced, so it's inferred rather than confirmed. Confidence is moderate (0.55) because the factual error and unsupported leap on mechanism reduce trust in the analysis.",
+        "reviewed_at": "2026-06-07T10:41:49.433085Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-07T10:34:24.019552Z",
+      "updated_at": "2026-06-07T10:41:56.815787Z"
+    },
+    {
+      "id": "8e2c78dadaee",
+      "claim": "No hidden or unlinked processes were detected. vol_psscan returned 33 processes, matching vol_pslist's 33 exactly. All processes visible in the active process list were also found by pool scanning, and no terminated/hidden remnants of additional malware processes were discovered. The compromise is confined to the ToolKeylogger family (ToolKeylogger.exe PID 280 and its injected DLL in explorer.exe PID 168). No malicious Windows services related to the keylogger were found in the 234 services enumerated by vol_svcscan.",
+      "severity": "info",
+      "confidence": 0.65,
+      "status": "refuted",
+      "evidence": [
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:32:09.514733Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2009-12-05T02:58:07+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 61, \"ImageFileName\": \"wscntfy.exe\", \"Offset(V)\": 29353448, \"PID\": 2624, \"PPID\": 1048, \"SessionId\": 0, \"Threads\": 1, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:33+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 102, \"ImageFileName\": \"alg.exe\", \"Offset(V)\": 29",
+          "output_sha256": "e95531207f8933721fba1fad3b2aebe4822e9cacf67e88cd45f0bb8e67b74d42",
+          "output_bytes": 10473,
+          "ran_at": "2026-06-07T10:32:13.026778Z"
+        },
+        {
+          "tool": "vol_svcscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.svcscan"
+          ],
+          "output_excerpt": "[{\"Binary\": null, \"Binary (Registry)\": null, \"Display\": \"Abiosdsk\", \"Dll\": null, \"Name\": \"Abiosdsk\", \"Offset\": 3677840, \"Order\": 1, \"PID\": null, \"Start\": \"SERVICE_DISABLED\", \"State\": \"SERVICE_STOPPED\", \"Type\": \"SERVICE_KERNEL_DRIVER\", \"__children\": []}, {\"Binary\": null, \"Binary (Registry)\": null, \"Display\": \"abp480n5\", \"Dll\": null, \"Name\": \"abp480n5\", \"Offset\": 3677984, \"Order\": 2, \"PID\": null, \"S",
+          "output_sha256": "929941027717a07db9b437ccde25dec0a7acaec2c39e1246b751d17756c7120b",
+          "output_bytes": 81738,
+          "ran_at": "2026-06-07T10:32:16.747924Z"
+        }
+      ],
+      "mitre_attack": [],
+      "review": {
+        "status": "refuted",
+        "confidence": 0.65,
+        "refutation_attempt": "I independently re-ran the same tools:\n1. vol_pslist → 33 processes; vol_psscan → 33 processes; all PIDs match exactly. The claim that no hidden/unlinked processes exist is confirmed.\n2. vol_malfind --pid 168 (explorer.exe) returned EMPTY — zero injection sites. The analyst's claim of an \"injected DLL in explorer.exe PID 168\" is therefore unsupported. ToolKeyloggerDLL.dll IS loaded in explorer.exe per dlllist (Base: 0x10000000, path: C:\\Program Files\\XP Advanced\\DLLs\\ToolKeyloggerDLL.dll), but it has file backing and a normal LoadCount — this is a standard module load, not code injection.\n3. vol_malfind --pid 280 (ToolKeylogger.exe) FAILED with \"RuntimeError: Vad tree is too deep\" — the keylogger process could not be analyzed for injection, leaving a significant gap.\n4. vol_netscan FAILED entirely (\"NotImplementedError: This version of Windows is not supported: 5.1 15.2600!\") — no network evidence can corroborate or refute any C2 claims.\n5. vol_svcscan produced 234 services, but output was truncated at row 142. No keylogger-related services were visible in the accessible portion, but the full enumeration cannot be verified.",
+        "rationale": "The finding makes three sub-claims, of which one is directly refuted: the \"injected DLL\" in explorer.exe. Malfind returned zero results for PID 168 — ToolKeyloggerDLL.dll is a normally loaded module with disk backing, not injected code. This materially changes the nature of the compromise assessment. The pslist/psscan parity claim (no hidden processes) is confirmed. The svcscan claim about no malicious services is partially verifiable but not fully confirmable due to truncation, and netscan failed entirely. Given the core \"injection\" assertion is wrong and two tools produced errors/gaps, the overall confidence must be downgraded and the claim marked as refuted in its current form.",
+        "reviewed_at": "2026-06-07T10:43:32.329175Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-07T10:34:41.565065Z",
+      "updated_at": "2026-06-07T10:43:43.721801Z"
+    },
+    {
+      "id": "5abdbf14f394",
+      "claim": "PID 280 (ToolKeylogger.exe) loads the Windows Sockets API stack (ws2_32.dll, WS2HELP.dll) and the Internet Explorer HTTP/HTTPS stack (WININET.dll, urlmon.dll, iertutil.dll, ieframe.dll), demonstrating the process has networking and HTTP communication capability. However, vol_netscan is incompatible with Windows XP SP3 and fails entirely — no actual network connections, remote endpoints, or exfiltration behavior can be confirmed or refuted. The presence of LicenseManager.dll (XPToolsLicenseComponent) provides a benign alternative explanation for network capability (license validation).",
+      "severity": "medium",
+      "confidence": 0.6,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "168"
+          ],
+          "output_excerpt": "[{\"Base\": 16777216, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"Explorer.EXE\", \"PID\": 168, \"Path\": \"C:\\\\WINDOWS\\\\Explorer.EXE\", \"Process\": \"explorer.exe\", \"Size\": 1044480, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 168, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdll.dll\", \"Process\": \"explorer.e",
+          "output_sha256": "fe2a17f18bf471eca386d266b71ee1fef9caf1e2d6b2bcdacdb8b708e8381c8f",
+          "output_bytes": 36048,
+          "ran_at": "2026-06-07T10:44:18.519704Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.netscan"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:44:09.204027Z"
+        },
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:43:51.453618Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[{\"Args\": null, \"PID\": 4, \"Process\": \"System\", \"__children\": []}, {\"Args\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"PID\": 576, \"Process\": \"smss.exe\", \"__children\": []}, {\"Args\": \"C:\\\\WINDOWS\\\\system32\\\\csrss.exe ObjectDirectory=\\\\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitializ",
+          "output_sha256": "4022f8c40da55b82171d1d4d9709ab1aa91bbb7fb2de3ca24fdfb41c399b4aae",
+          "output_bytes": 5131,
+          "ran_at": "2026-06-07T10:43:55.963091Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1071.001",
+        "T1041"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.6,
+        "refutation_attempt": "1) Re-ran vol_dlllist --pid 280 independently and confirmed all claimed DLLs (ws2_32, WS2HELP, WININET, urlmon, iertutil, ieframe, LicenseManager) are indeed loaded. 2) Re-ran vol_netscan and confirmed it crashes with NotImplementedError on XP SP3 (5.1 15.2600). 3) Attempted to determine if LicenseManager.dll is truly an independent \"benign\" component: the path C:\\WINDOWS\\system32\\XPToolsLicenseComponent\\LicenseManager.dll strongly suggests it belongs to the same vendor (\"XPTools\" / \"XP Advanced\") that produces ToolKeylogger.exe — i.e., it is the keylogger's own license-validation module, not a separate benign Microsoft service. 4) Checked malfind (failed: Vad tree too deep on this image), psscan (no hidden processes found, PID 280 visible in both pslist and psscan), and svcscan (no suspicious services). 5) Verified Explorer.EXE (PID 168) is the parent of ToolKeylogger.exe, consistent with a user-launched or Run-key persistence startup.",
+        "rationale": "The raw DLL-loading facts are directly supported by vol_dlllist output and the netscan failure is confirmed. However, the characterization of LicenseManager.dll as a \"benign alternative explanation\" is misleading — it lives in XPToolsLicenseComponent, almost certainly the same vendor (\"XP Advanced\" / \"XPTools\") that ships the keylogger. This makes it part of the same software ecosystem, not an independent benign factor. Additionally, ieframe.dll (11 MB, IE frame/window container) is mischaracterized as part of the \"HTTP/HTTPS stack\" — it is primarily a browser UI framework, though it ships with IE. The severity of \"medium\" is questionable given zero confirmed network connections (netscan inoperable on XP SP3) and no evidence of actual data exfiltration. The core factual observations are correct but the interpretive framing inflates the threat level.",
+        "reviewed_at": "2026-06-07T10:48:08.696154Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-07T10:45:25.072922Z",
+      "updated_at": "2026-06-07T10:48:21.636759Z"
+    },
+    {
+      "id": "01866f20e893",
+      "claim": "PID 280 (ToolKeylogger.exe, path C:\\Program Files\\XP Advanced\\ToolKeylogger.exe) is a child process of explorer.exe (PID 168). Explorer.exe started at 02:11:20 UTC; ToolKeylogger.exe started at 02:11:23 UTC — a 3-second delta consistent with user-logon autostart execution. However, the specific persistence mechanism (e.g., registry Run keys, Startup folder) cannot be determined from memory alone — no registry analysis tools are available, and the command line contains no switches or parent-process evidence pointing to a specific autostart location.",
+      "severity": "medium",
+      "confidence": 0.85,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:43:51.453618Z"
+        },
+        {
+          "tool": "vol_pstree",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pstree"
+          ],
+          "output_excerpt": "[{\"Audit\": null, \"Cmd\": null, \"CreateTime\": null, \"ExitTime\": null, \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"Path\": null, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": [{\"Audit\": \"\\\\Device\\\\HarddiskVolume1\\\\WINDOWS\\\\system32\\\\smss.exe\", \"Cmd\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\"",
+          "output_sha256": "6265a576df08049c5ec20bf0f504eb2da1998d3cf2de2b71cd82063f6753c438",
+          "output_bytes": 21217,
+          "ran_at": "2026-06-07T10:43:52.680705Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[{\"Args\": null, \"PID\": 4, \"Process\": \"System\", \"__children\": []}, {\"Args\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"PID\": 576, \"Process\": \"smss.exe\", \"__children\": []}, {\"Args\": \"C:\\\\WINDOWS\\\\system32\\\\csrss.exe ObjectDirectory=\\\\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitializ",
+          "output_sha256": "4022f8c40da55b82171d1d4d9709ab1aa91bbb7fb2de3ca24fdfb41c399b4aae",
+          "output_bytes": 5131,
+          "ran_at": "2026-06-07T10:43:55.963091Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1547.001"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.85,
+        "refutation_attempt": "I independently re-ran vol_pslist, vol_pstree, vol_cmdline, vol_psscan, vol_dlllist (PID 280), and vol_netscan/malfind (both errored — XP not supported / VAD tree depth). I verified: (1) PPID of PID 280 is 168 (explorer.exe) in both pslist and psscan — no hidden parent. (2) pstree confirms the parent-child arc. (3) CreateTime delta is exactly 3 seconds (02:11:20 vs 02:11:23). (4) Command line is bare path with no switches. (5) psscan reveals no hidden/terminated processes that would contradict the tree. I tested alternative hypotheses: manual user launch (unlikely — 6 explorer children including ToolKeylogger all spawned at exactly 02:11:23 in a batch consistent with Run/Startup processing), wrong parent (refuted — PPID 168 is consistent across all tools), process hollowing/name spoofing (dlllist shows ToolKeylogger.exe loaded from the claimed path with its companion DLLs SkinMagic.dll, ToolKeyloggerDLL.dll, LicenseManager.dll — consistent with a real installation). I could NOT check registry hives, so the specific Run-key/Startup-folder mechanism remains undetermined as the investigator correctly notes.",
+        "rationale": "Every directly observable element is corroborated by multiple independent Volatility plugins. The parent-child relationship (PID 280 → PPID 168), the 3-second CreateTime delta, the executable path, and the empty command line are all confirmed by pslist, pstree, cmdline, and psscan. The \"autostart\" label is an inference but a well-supported one given the batch-launch pattern at 02:11:23 across six explorer.exe children. The investigator's own acknowledgment that the precise persistence mechanism cannot be determined without registry tools is honest and correct. One minor note: pslist truncates the ImageFileName to \"ToolKeylogger.e\" (14-char EPROCESS limit on XP), but the full name is confirmed by both pstree (Path) and dlllist (Name/Path). This does not weaken the finding.",
+        "reviewed_at": "2026-06-07T10:50:09.197904Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-07T10:45:33.564015Z",
+      "updated_at": "2026-06-07T10:50:20.213532Z"
+    },
+    {
+      "id": "47b54eb00235",
+      "claim": "No hidden or unlinked processes were detected: vol_pslist returned 33 active processes and vol_psscan also returned 33, with identical PIDs in both outputs. No terminated or pool-only remnants of additional malware processes were found. However, vol_malfind for PID 168 (explorer.exe) returned zero results, meaning the claim of \"injected code\" in explorer.exe is directly refuted. ToolKeyloggerDLL.dll is loaded in explorer.exe (Base 0x10000000, Path C:\\Program Files\\XP Advanced\\DLLs\\ToolKeyloggerDLL.dll, Size 192512) as a normally-backed module — this is a legitimate loaded DLL (not code injection via RWX private regions). The same DLL is also loaded in PID 280 (ToolKeylogger.exe). This means the keylogger DLL is present in the shell process via normal loading, not injection. vol_netscan is completely broken on this XP image and vol_malfind crashes for PID 280 (VAD tree too deep).",
+      "severity": "medium",
+      "confidence": 0.9,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:43:51.453618Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2009-12-05T02:58:07+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 61, \"ImageFileName\": \"wscntfy.exe\", \"Offset(V)\": 29353448, \"PID\": 2624, \"PPID\": 1048, \"SessionId\": 0, \"Threads\": 1, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:33+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 102, \"ImageFileName\": \"alg.exe\", \"Offset(V)\": 29",
+          "output_sha256": "e95531207f8933721fba1fad3b2aebe4822e9cacf67e88cd45f0bb8e67b74d42",
+          "output_bytes": 10473,
+          "ran_at": "2026-06-07T10:43:54.790704Z"
+        },
+        {
+          "tool": "vol_malfind",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.malfind",
+            "--pid",
+            "280"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:44:52.385863Z"
+        },
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "168"
+          ],
+          "output_excerpt": "[{\"Base\": 16777216, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"Explorer.EXE\", \"PID\": 168, \"Path\": \"C:\\\\WINDOWS\\\\Explorer.EXE\", \"Process\": \"explorer.exe\", \"Size\": 1044480, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 168, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdll.dll\", \"Process\": \"explorer.e",
+          "output_sha256": "fe2a17f18bf471eca386d266b71ee1fef9caf1e2d6b2bcdacdb8b708e8381c8f",
+          "output_bytes": 36048,
+          "ran_at": "2026-06-07T10:44:18.519704Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.netscan"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:44:09.204027Z"
+        },
+        {
+          "tool": "vol_svcscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.svcscan"
+          ],
+          "output_excerpt": "[{\"Binary\": null, \"Binary (Registry)\": null, \"Display\": \"Abiosdsk\", \"Dll\": null, \"Name\": \"Abiosdsk\", \"Offset\": 3677840, \"Order\": 1, \"PID\": null, \"Start\": \"SERVICE_DISABLED\", \"State\": \"SERVICE_STOPPED\", \"Type\": \"SERVICE_KERNEL_DRIVER\", \"__children\": []}, {\"Binary\": null, \"Binary (Registry)\": null, \"Display\": \"abp480n5\", \"Dll\": null, \"Name\": \"abp480n5\", \"Offset\": 3677984, \"Order\": 2, \"PID\": null, \"S",
+          "output_sha256": "929941027717a07db9b437ccde25dec0a7acaec2c39e1246b751d17756c7120b",
+          "output_bytes": 81738,
+          "ran_at": "2026-06-07T10:44:10.541077Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1055",
+        "T1120"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.9,
+        "refutation_attempt": "Independently re-ran all six cited tools: vol_pslist, vol_psscan, vol_malfind (PID 168), vol_dlllist (PID 168), vol_netscan, vol_malfind (PID 280). Also ran vol_dlllist (PID 280), vol_pstree, vol_cmdline, and vol_svcscan to check for alternative explanations. Manually diffed the 33 PIDs from pslist against the 33 PIDs from psscan — they are identical sets. Tested whether malfind emptiness could be a tool malfunction (it worked fine on PID 168; crash on PID 280 was a known VAD-tree-depth bug). Checked whether the DLL loading could be AppInit_DLLs or shell-extension injection rather than LoadLibrary — the DLL is indeed file-backed with a valid path, so malfind correctly classifies it as non-injected under its detection model. Attempted netscan — confirmed broken with NotImplementedError for XP 5.1.",
+        "rationale": "Every factual sub-claim checks out against independent tool runs: (1) pslist/psscan both yield 33 identical PIDs with no pool-only remnants; (2) vol_malfind for PID 168 returns zero results; (3) ToolKeyloggerDLL.dll in explorer.exe is file-backed at 0x10000000, not a private RWX region; (4) the same DLL is file-backed in PID 280; (5) netscan crashes with NotImplementedError on this XP image; (6) malfind for PID 280 crashes with \"Vad tree is too deep.\" The only caveat is that malfind's emptiness does not rule out all injection techniques (e.g., reflective DLL injection, hooking), so the word \"refuted\" is scoped to malfind-style private-RWX injection. That nuance accounts for the 0.90 rather than 1.0 confidence.",
+        "reviewed_at": "2026-06-07T10:52:14.924244Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-07T10:45:50.235640Z",
+      "updated_at": "2026-06-07T10:52:21.251530Z"
+    },
+    {
+      "id": "edc1fc6e60cb",
+      "claim": "PID 280 (ToolKeylogger.exe from \"C:\\Program Files\\XP Advanced\\\") loads WinSock (ws2_32.dll, WS2HELP.dll) and the WinINet HTTP/HTTPS client stack (WININET.dll, urlmon.dll, iertutil.dll), giving the process TCP/IP networking and HTTP communication capability. It also loads ieframe.dll (IE browser frame container for embedded browser UI) and msxml3.dll (XML parsing). The process loads vendor-ecosystem DLLs: ToolKeyloggerDLL.dll (core keylogging), SkinMagic.dll (UI skinning), and LicenseManager.dll from XPToolsLicenseComponent (license validation — same \"XPTools\"/\"XP Advanced\" vendor suite). No actual network connections, remote endpoints, or data exfiltration can be confirmed: vol_netscan is incompatible with Windows XP SP3 (raises NotImplementedError), and vol_malfind fails with a VAD tree depth error. The DLL evidence demonstrates networking and keylogging capability but does not prove active C2 or exfiltration.",
+      "severity": "low",
+      "confidence": 0.92,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_dlllist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.dlllist",
+            "--pid",
+            "280"
+          ],
+          "output_excerpt": "[{\"Base\": 4194304, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ToolKeylogger.exe\", \"PID\": 280, \"Path\": \"C:\\\\Program Files\\\\XP Advanced\\\\ToolKeylogger.exe\", \"Process\": \"ToolKeylogger.e\", \"Size\": 372736, \"__children\": []}, {\"Base\": 2089811968, \"File output\": \"Disabled\", \"LoadCount\": -1, \"LoadTime\": null, \"Name\": \"ntdll.dll\", \"PID\": 280, \"Path\": \"C:\\\\WINDOWS\\\\system32\\\\ntdl",
+          "output_sha256": "0dcd2a46810ccbefd947f8990f97e5fb985c19a65da83c8887ae4094ad370559",
+          "output_bytes": 13131,
+          "ran_at": "2026-06-07T10:52:38.833438Z"
+        },
+        {
+          "tool": "vol_pslist",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pslist"
+          ],
+          "output_excerpt": "[{\"CreateTime\": null, \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 19, \"ImageFileName\": \"smss.exe\", \"Offset(V)\": 2183227008, \"PID\": 576, \"PPID",
+          "output_sha256": "5c9aae21c57472b4aed6c5701d1802298b74f7e37e46b501ca5ce6395fc06cd3",
+          "output_bytes": 10539,
+          "ran_at": "2026-06-07T10:52:30.045437Z"
+        },
+        {
+          "tool": "vol_pstree",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.pstree"
+          ],
+          "output_excerpt": "[{\"Audit\": null, \"Cmd\": null, \"CreateTime\": null, \"ExitTime\": null, \"Handles\": 470, \"ImageFileName\": \"System\", \"Offset(V)\": 2185013760, \"PID\": 4, \"PPID\": 0, \"Path\": null, \"SessionId\": null, \"Threads\": 56, \"Wow64\": false, \"__children\": [{\"Audit\": \"\\\\Device\\\\HarddiskVolume1\\\\WINDOWS\\\\system32\\\\smss.exe\", \"Cmd\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"CreateTime\": \"2009-12-05T02:11:02+00:00\", \"ExitTime\"",
+          "output_sha256": "6265a576df08049c5ec20bf0f504eb2da1998d3cf2de2b71cd82063f6753c438",
+          "output_bytes": 21217,
+          "ran_at": "2026-06-07T10:52:31.315026Z"
+        },
+        {
+          "tool": "vol_cmdline",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.cmdline"
+          ],
+          "output_excerpt": "[{\"Args\": null, \"PID\": 4, \"Process\": \"System\", \"__children\": []}, {\"Args\": \"\\\\SystemRoot\\\\System32\\\\smss.exe\", \"PID\": 576, \"Process\": \"smss.exe\", \"__children\": []}, {\"Args\": \"C:\\\\WINDOWS\\\\system32\\\\csrss.exe ObjectDirectory=\\\\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitializ",
+          "output_sha256": "4022f8c40da55b82171d1d4d9709ab1aa91bbb7fb2de3ca24fdfb41c399b4aae",
+          "output_bytes": 5131,
+          "ran_at": "2026-06-07T10:52:40.010568Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.netscan"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:52:41.155691Z"
+        },
+        {
+          "tool": "vol_malfind",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.malfind",
+            "--pid",
+            "280"
+          ],
+          "output_excerpt": "\r\n",
+          "output_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "output_bytes": 2,
+          "ran_at": "2026-06-07T10:52:42.355111Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "C:\\Users\\Administrator\\find-evil\\.venv\\Scripts\\vol.exe",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "C:\\Users\\Administrator\\find-evil\\evidence\\m57-pat-2009-12-05\\extracted\\pat-2009-12-05.winddramimage",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2009-12-05T02:58:07+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 61, \"ImageFileName\": \"wscntfy.exe\", \"Offset(V)\": 29353448, \"PID\": 2624, \"PPID\": 1048, \"SessionId\": 0, \"Threads\": 1, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2009-12-05T02:11:33+00:00\", \"ExitTime\": null, \"File output\": \"Disabled\", \"Handles\": 102, \"ImageFileName\": \"alg.exe\", \"Offset(V)\": 29",
+          "output_sha256": "e95531207f8933721fba1fad3b2aebe4822e9cacf67e88cd45f0bb8e67b74d42",
+          "output_bytes": 10473,
+          "ran_at": "2026-06-07T10:53:04.609993Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1056.001",
+        "T1071.001"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.92,
+        "refutation_attempt": "I independently re-ran vol_dlllist --pid 280, vol_pslist, vol_pstree, vol_cmdline, vol_psscan, vol_netscan, and vol_malfind against the same evidence file. I attempted to disprove by: (1) checking if the DLLs were actually loaded from different paths/names, (2) verifying vol_netscan and vol_malfind failure claims, (3) checking whether any alternative benign explanation exists (e.g., SkinMagic.dll as a third-party UI library, ToolKeyloggerDLL.dll name being merely suggestive). All DLL names, base addresses, and paths match the claim exactly. Netscan does raise NotImplementedError for Windows 5.1. Malfind fails with Vad tree too deep. No contradictions found.",
+        "rationale": "Every factual claim about loaded DLLs (names, paths, PIDs) is directly corroborated by my independent vol_dlllist run. The tool failures (netscan NotImplementedError, malfind VAD tree depth) are also independently verified. The interpretive labels (e.g., \"core keylogging\", \"UI skinning\", \"license validation\", \"vendor suite\") are reasonable inferences from the DLL names and install paths but not independently proven — however, the analyst explicitly frames these as capability evidence, not proof of activity, and correctly notes the absence of exfiltration proof. Confidence is slightly reduced (0.92 vs 0.85) only because \"core keylogging\" from ToolKeyloggerDLL.dll is a name-based inference without behavioral confirmation, but the overall finding remains solidly supported.",
+        "reviewed_at": "2026-06-07T10:55:06.260491Z"
+      },
+      "iteration": 2,
+      "created_at": "2026-06-07T10:53:48.906528Z",
+      "updated_at": "2026-06-07T10:55:19.172359Z"
+    }
+  ],
+  "summary": "4 confirmed of 9 findings; 2 self-correction iteration(s); evidence integrity verified.",
+  "iterations_run": 2,
+  "generated_at": "2026-06-07T10:55:19.474503Z"
+}

@@ -17,6 +17,8 @@
 > Independent Linux reproduction refuted one of those confirmed findings
 > (`DKOM/rootkit`) as a tool artifact, leaving **3 retained confirmed findings,
 > precision 1.00, recall 0.75, F1 0.86** under the manual-review proxy.
+> Second independent public Windows memory case (DigitalCorpora M57 / Pat):
+> **4 confirmed of 9 findings, 2 self-corrections, 265-record audit (hash chain OK)**.
 > See the [architecture diagram](docs/architecture.png) and the
 > [real report + logs](docs/examples/). See it with **no API key**:
 > `uv run siftpp-demo` · attack it: `uv run siftpp-spoliation-test`.
@@ -45,11 +47,11 @@ not a prompt that says "be careful."
 
 | FIND EVIL! criterion | What Protocol SIFT++ does | Verify it yourself |
 |---|---|---|
-| **Autonomous + real-time self-correction** *(tiebreaker)* | Investigator/Skeptic loop, no human in the loop; one run forced 2 corrections, and an independent re-run **refuted its own confirmed "DKOM rootkit"** as a tool artifact | `uv run siftpp-demo` (no key); `docs/examples/srl-2018-linux/report.md` → *Refuted* |
+| **Autonomous + real-time self-correction** *(tiebreaker)* | Investigator/Skeptic loop, no human in the loop; SANS and M57 runs each forced 2 corrections, and an independent re-run **refuted its own confirmed "DKOM rootkit"** as a tool artifact | `uv run siftpp-demo` (no key); `docs/examples/srl-2018-linux/report.md` -> *Refuted*; `docs/examples/m57-pat-2009-12-05/report.md` |
 | **IR accuracy / catches its own hallucinations** | Skeptic re-runs tools to refute each finding -> `confirmed`/`inferred`/`refuted`; cross-run correction removed DKOM FP; manual-review proxy: precision 1.00, recall 0.75, F1 0.86 | `docs/ACCURACY_REPORT.md` |
-| **Depth > breadth** | One APT memory case, every claim verified, **reproduced on Windows *and* Linux** with byte-identical evidence | `docs/examples/srl-2018-base-file-memory/` + `…/srl-2018-linux/` |
-| **Architectural (not prompt) guardrails** | Read-only MCP server: no shell, no dump/write/network tool *exists* — spoliation is impossible by construction | `uv run siftpp-spoliation-test` → 14/14 refused, evidence unchanged |
-| **Audit trail to specific tool executions** | Hash-**chained** append-only log (tamper-evident) + every finding cites command + output SHA-256 | `uv run siftpp-tamper-test` → edit detected; `verify_chain(...)` → `(True, 302)` |
+| **Depth > breadth** | Primary SANS APT case, every claim verified, **reproduced on Windows *and* Linux** with byte-identical evidence; also reproduced on a second independent public Windows memory case | `docs/examples/srl-2018-base-file-memory/` + `docs/examples/srl-2018-linux/` + `docs/examples/m57-pat-2009-12-05/` |
+| **Architectural (not prompt) guardrails** | Read-only MCP server: no shell, no dump/write/network tool *exists* - spoliation is impossible by construction | `uv run siftpp-spoliation-test` -> 14/14 refused, evidence unchanged |
+| **Audit trail to specific tool executions** | Hash-**chained** append-only log (tamper-evident) + every finding cites command + output SHA-256 | `uv run siftpp-tamper-test` -> edit detected; `verify_chain(...)` -> `(True, 302)` |
 | **Usability / docs** | One command, no API key, runs on Windows + Linux/SIFT; full docs | `uv run siftpp-demo` |
 
 > **What most autonomous-IR agents lack — and SIFT++ has:** an **adversarial Skeptic**
@@ -58,7 +60,11 @@ not a prompt that says "be careful."
 > A broad agent that can't verify itself just produces more unverified claims, faster.
 
 ### Deliberate scope (why "narrow" is the point)
-- **Depth over breadth (criterion #3).** One case, fully verified and reproduced — not many cases, lightly checked. The loop is tool-, model-, and OS-agnostic (Volatility 3 today; Windows + Linux/SIFT; DeepSeek *or* Anthropic), so breadth is configuration, not a redesign.
+- **Depth over breadth (criterion #3).** One primary competition case, fully
+  verified and reproduced, then one second independent public Windows memory
+  case to prove the loop is not case-specific. The loop is tool-, model-, and
+  OS-agnostic (Volatility 3 today; Windows + Linux/SIFT; DeepSeek *or*
+  Anthropic), so breadth is configuration, not a redesign.
 - **Verification > volume.** A broader agent that cannot verify itself just
   produces more unverified claims, faster. We chose one case, every claim
   adversarially checked and reproduced across OS, because the rubric explicitly
@@ -91,6 +97,20 @@ overstated the malware attribution, the Skeptic downgraded it twice, and the
 system converged on a narrower confirmed behavioral claim tied to `psscan` and
 `netscan` evidence.
 
+Second independent public memory case:
+
+```text
+DigitalCorpora M57 Pat / pat-2009-12-05.winddramimage
+4 confirmed of 9 findings; 2 self-correction iteration(s); evidence integrity verified.
+audit log: 265 records, hash chain OK
+```
+
+The M57 run shows the same correction behavior on a separate XP memory image:
+the Skeptic downgraded over-strong "exfiltration" and "persistence" claims, and
+the system converged on narrower confirmed facts such as `ToolKeyloggerDLL.dll`
+loaded into `explorer.exe`, `ToolKeylogger.exe` as an `explorer.exe` child, and
+matching `pslist`/`psscan` process sets.
+
 ## Why It Matters
 
 AI-assisted attackers can move quickly, but autonomous responders can also
@@ -99,8 +119,9 @@ hallucinate. Protocol SIFT++ targets both of FIND EVIL!'s top scoring areas:
 - Autonomous execution with real-time self-correction.
 - IR accuracy and hallucination catching.
 
-The project is intentionally narrow: one Windows memory case, a curated
-Volatility 3 toolset, strong evidence citations, and a visible correction loop.
+The project is intentionally narrow: one primary SANS Windows memory case plus
+one public independent Windows memory case, a curated Volatility 3 toolset,
+strong evidence citations, and a visible correction loop.
 
 ## Architecture
 

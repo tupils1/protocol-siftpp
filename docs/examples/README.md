@@ -19,6 +19,10 @@ large), so these curated copies are the in-repo evidence.
 - `srl-2018-linux/` — independent **Linux** re-run (Ubuntu 22.04), same image
   (sha256-identical). 2 confirmed of 8; audit `(True, 256)`. Its report
   **refutes** the DKOM claim the Windows run confirmed — a real caught over-claim.
+- `m57-pat-2009-12-05/` - second independent public **Windows** memory case
+  (DigitalCorpora M57 Pat). 4 confirmed of 9; 2 self-correction iterations;
+  audit `(True, 265)`. Its report downgrades over-strong exfiltration and
+  persistence claims, then confirms narrower facts.
 - `linux-volcheck.txt`, `linux-smoke.txt`, `linux-realrun.log` — Linux
   Volatility/portability verification + run logs.
 
@@ -27,6 +31,9 @@ large), so these curated copies are the in-repo evidence.
 ```bash
 uv run python -c "from protocol_siftpp.audit import verify_chain; print(verify_chain('docs/examples/srl-2018-base-file-memory/audit.jsonl'))"
 # -> (True, 302)
+
+uv run python -c "from protocol_siftpp.audit import verify_chain; print(verify_chain('docs/examples/m57-pat-2009-12-05/audit.jsonl'))"
+# -> (True, 265)
 ```
 
 ## Note on secrets
