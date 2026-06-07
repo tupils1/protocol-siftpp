@@ -21,6 +21,7 @@ siftpp-spoliation-test = "protocol_siftpp.spoliation_test:main"
 siftpp-tamper-test = "protocol_siftpp.tamper_test:main"
 siftpp-demo = "protocol_siftpp.demo:main"
 siftpp-download-case = "protocol_siftpp.sample_case:main"
+siftpp-report = "protocol_siftpp.report_html:main"
 
 [dependency-groups]
 dev = [

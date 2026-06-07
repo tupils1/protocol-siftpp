@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocol SIFT++ — srl-2018-linux</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body { font: 15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; margin: 0; background:#f6f8fa; color:#1f2328; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+header h1 { margin:0 0 4px; font-size: 24px; }
+.sub { color:#57606a; font-size: 13px; }
+.meta { margin:14px 0; padding:12px 14px; background:#fff; border:1px solid #d0d7de; border-radius:10px; font-size:13px; }
+.meta code { word-break: break-all; }
+.pill { display:inline-block; padding:2px 10px; border-radius:999px; font-weight:600; font-size:12px; color:#fff; }
+.pill.ok { background:#1a7f37; } .pill.bad { background:#cf222e; }
+.stats { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 24px; }
+.stat { flex:1 1 120px; background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px; text-align:center; }
+.stat .num { font-size:24px; font-weight:700; } .stat .lbl { font-size:11px; color:#57606a; text-transform:uppercase; letter-spacing:.04em; }
+.summary { background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px 14px; margin-bottom:20px; }
+h2 { font-size:16px; margin:24px 0 10px; }
+.card { background:#fff; border:1px solid #d0d7de; border-left:5px solid #57606a; border-radius:10px; padding:14px 16px; margin:10px 0; }
+.cardtop { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.badge { color:#fff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:6px; }
+.sev { font-size:12px; color:#57606a; text-transform:uppercase; }
+.bar { position:relative; flex:1 1 140px; height:16px; background:#eaeef2; border-radius:8px; min-width:120px; overflow:hidden; }
+.bar .fill { height:100%; }
+.bar .barlbl { position:absolute; right:6px; top:0; font-size:11px; line-height:16px; color:#1f2328; }
+.claim { font-weight:600; margin-bottom:6px; }
+.chip { display:inline-block; background:#ddf4ff; color:#0969da; border-radius:6px; padding:1px 7px; font-size:11px; margin:2px 4px 2px 0; }
+.skeptic { background:#fff8c5; border:1px solid #eac54f; border-radius:8px; padding:8px 10px; font-size:13px; margin:8px 0; }
+.ev { margin:8px 0 0; padding-left:18px; font-size:12px; }
+.hash { color:#57606a; font-family:ui-monospace,Menlo,Consolas,monospace; }
+code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+footer { margin-top:30px; color:#57606a; font-size:12px; text-align:center; }
+</style></head>
+<body><div class="wrap">
+<header>
+  <h1>Protocol SIFT++ — Incident Report</h1>
+  <div class="sub">Self-verifying autonomous DFIR · case <b>srl-2018-linux</b></div>
+</header>
+<div class="meta">
+  Evidence: <code>/home/dministrator/ev/base-file-memory.img</code><br>
+  Evidence SHA-256: <code>4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd</code><br>
+  <span class="pill ok">audit hash chain OK · 256 records</span>
+</div>
+<div class="stats"><div class="stat"><div class="num">2</div><div class="lbl">confirmed</div></div><div class="stat"><div class="num">5</div><div class="lbl">inferred</div></div><div class="stat"><div class="num">1</div><div class="lbl">refuted</div></div><div class="stat"><div class="num">2</div><div class="lbl">iterations</div></div><div class="stat"><div class="num">84</div><div class="lbl">model_calls</div></div><div class="stat"><div class="num">136</div><div class="lbl">tool_calls</div></div></div>
+<div class="summary"><b>Summary.</b> 2 confirmed of 8 findings; 2 self-correction iteration(s); evidence integrity verified.</div>
+<h2 style="color:#1a7f37">Confirmed (2)</h2>
+    <div class="card" style="border-left-color:#57606a">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">info</span>
+        <div class="bar"><div class="fill" style="width:95%;background:#1a7f37"></div><span class="barlbl">0.95</span></div>
+      </div>
+      <div class="claim">All seven plugins that traverse the EPROCESS ActiveProcessLinks list (vol_pslist, vol_pstree, vol_cmdline, vol_dlllist, vol_svcscan, vol_malfind) return zero results, despite vol_psscan recovering 101 processes and vol_netscan recovering 145 network connections. Combined with KeNumberProcessors=0 (vol_info)—an impossible value for any running system—this pattern indicates a KDBG corruption or symbol-resolution failure, not DKOM-based process hiding. Real DKOM selectively unlinks specific malicious processes; unlinking all processes including System (PID 4) would crash the OS, yet psscan confirms these critical processes are running (ExitTime=null).</div>
+      <div class="atk"></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.95):</b> The factual observations are reproducible and correct. The interpretation — KDBG corruption or symbol-resolution failure rather than DKOM — is forcefully supported by KeNumberProcessors=0 (impossible value read from KDBG) combined with the classic pattern where pool-scanning plugins (psscan, netscan) succeed but ActiveProcessLinks-walking plugins (pslist, pstree, cmdline, dlllist, malfind) all return nothing. The investigator&#x27;s refutation of DKOM is correct: real DKOM selectively unlinks individual processes; unlinking every process including System (PID 4) would immediately crash the OS, yet psscan shows System running (96 threads, ExitTime=null). One minor inaccuracy: the claim says &quot;seven&quot; plugins but enumerates only six; also svcscan does not walk ActiveProcessLinks (it scans SERVICE_RECORD pool allocations), though its failure is still consistent with the broader KDBG/symbol issue. These do not affect the core conclusion.</div>
+      <ul class="ev"><li><code>vol_info</code> <span class="hash">sha256 88e7086181caa6d7…</span></li><li><code>vol_pslist</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_dlllist</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_svcscan</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_malfind</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:92%;background:#1a7f37"></div><span class="barlbl">0.92</span></div>
+      </div>
+      <div class="claim">Process &quot;subject_srv.exe&quot; (PID 6160, pool tag &quot;subject_srv.ex&quot;) is a 32-bit (Wow64=true) service process spawned by services.exe (PPID 536) on a 64-bit Windows Server 2012 R2 host. It was created at 2018-09-06T19:25:36 UTC — approximately 3 minutes before image acquisition (system time 2018-09-06T19:28:44). The process listens on TCP port 3262 bound to 0.0.0.0 and ::, holds one ESTABLISHED connection to 172.16.5.50:44262, and had a prior CLOSED connection to 172.16.5.25:5682. The process binary name, 32-bit architecture on a 64-bit server, non-standard listening port, and late creation time are anomalous, but the destination IPs are internal (RFC 1918) and the host runs numerous legitimate monitoring agents (NCPA, NSClient++, McAfee, VMware, Ruby agent, Management Agent). Direct code-level confirmation (malfind, dlllist, cmdline) is unavailable due to image limitations affecting most Volatility 3 plugins on this sample, so malicious intent cannot be confirmed or excluded.</div>
+      <div class="atk"><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.92):</b> Every factual assertion in the finding is directly corroborated by raw tool output: (a) psscan entry at Offset 987717760 shows ImageFileName &quot;subject_srv.ex&quot; (12-char truncation of likely &quot;subject_srv.exe&quot;), PID 6160, PPID 536, Wow64=true, CreateTime 2018-09-06T19:25:36Z, ExitTime null (alive), 12 threads; (b) PPID 536 is services.exe (psscan Offset 2079840192); (c) vol_info confirms 64-bit Server 2012 R2 (NtMajorVersion=6, NtMinorVersion=3, NtProductType=Server, Is64Bit=true), SystemTime 2018-09-06T19:28:44Z (~3 min after process creation); (d) netscan shows TCPv4 LISTENING on 0.0.0.0:3262 and TCPv6 LISTENING on :::3262 (Offset 2077872576, Owner subject_srv.ex PID 6160); (e) netscan shows ESTABLISHED to 172.16.5.50:44262 (Offset 2075192592); (f) netscan shows CLOSED to 172.16.5.25:5682 (Offset 637877184). Image limitations (empty pslist/pstree/svcscan/cmdline/malfind/dlllist) prevent deeper confirmation of service registration or code-level analysis, which the investigator correctly discloses. The minor discrepancy is that the raw ImageFileName is truncated to &quot;subject_srv.ex&quot; (12 chars), not &quot;subject_srv.exe&quot;; the full .exe extension is a reasonable but technically unconfirmed inference. The 0.50 investigator confidence is appropriately conservative given these limitations. I cannot refute any factual component.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li></ul>
+    </div><h2 style="color:#9a6700">Inferred (5)</h2>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:65%;background:#9a6700"></div><span class="barlbl">0.65</span></div>
+      </div>
+      <div class="claim">Malicious service &quot;subject_srv.exe&quot; (PID 6160) running as a child of services.exe, listening on TCP port 3262 with an active ESTABLISHED connection to 172.16.5.50:44262, consistent with a backdoor/C2 implant.</div>
+      <div class="atk"><span class="chip">T1543.003</span><span class="chip">T1571</span><span class="chip">T1505.003</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.65):</b> The factual claims — PID 6160 named subject_srv.exe, child of services.exe, listening on TCP 3262, ESTABLISHED to 172.16.5.50:44262 — are all directly confirmed by independent re-examination of psscan and netscan. However, the characterization as &quot;malicious&quot; and a &quot;backdoor/C2 implant&quot; rests on inference, not direct evidence. Cmdline, dlllist, malfind, and svcscan all failed (empty EPROCESS list), so there is no code-level or persistence-level confirmation of malice. The destination IP is internal (RFC 1918), which is equally consistent with a legitimate internal management server as with C2. The environment is already instrumented with multiple legitimate agents, providing a plausible non-malicious explanation. The investigator&#x27;s 0.95 confidence is too high given the missing corroborating evidence. Verdict: inferred, confidence 0.65.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:70%;background:#9a6700"></div><span class="barlbl">0.70</span></div>
+      </div>
+      <div class="claim">Wow64 PowerShell process (PID 3164) spawned by another PowerShell (PID 4072) exhibits suspicious network activity to 172.16.4.10:8080 (CLOSE_WAIT) and spawned numerous short-lived rundll32.exe child processes, consistent with script-based malware execution.</div>
+      <div class="atk"><span class="chip">T1059.001</span><span class="chip">T1105</span><span class="chip">T1218.011</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.70):</b> Factual elements (PID hierarchy, network connection, rundll32 spawning pattern) are all confirmed by independent psscan and netscan runs. However, the &quot;script-based malware execution&quot; interpretation lacks direct supporting evidence: no command lines available, no DLL/injection data, and the target IP:port is also contacted by other non-malicious processes. The patterns are suspicious but consistent with alternative benign explanations (legitimate admin scripting contacting an internal web service). Confidence is 0.70 because the rundll32 burst pattern and WMI-spawned PowerShell chain are genuinely suspicious, but critical confirmatory data is missing.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:60%;background:#9a6700"></div><span class="barlbl">0.60</span></div>
+      </div>
+      <div class="claim">Process &quot;subject_srv.exe&quot; (PID 6160) is registered as a Windows service (PPID 536 = services.exe), indicating persistence via a malicious service installation (T1543.003).</div>
+      <div class="atk"><span class="chip">T1543.003</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.60):</b> The psscan evidence confirms that a process named &quot;subject_srv.ex&quot; (PID 6160) exists with PPID=536 (services.exe), SessionId=0, Wow64=true, and is still running. It also has a listening socket on TCP/3262 with an active connection to 172.16.5.50:44262. These facts are suspicious and consistent with a malicious service. However, the definitive proof that it is *registered* as a Windows service (service registry key under HKLM\SYSTEM\CurrentControlSet\Services) is absent — svcscan yielded nothing, and no registry tools are available. The claim hinges on service registration (T1543.003), and PPID=services.exe alone is insufficient to confirm registry-based persistence. Therefore the claim is plausible (inferred) but not confirmed by direct evidence.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:70%;background:#9a6700"></div><span class="barlbl">0.70</span></div>
+      </div>
+      <div class="claim">Over 25 unique rundll32.exe instances spawned from PowerShell PID 3164 in rapid succession (each running only 1-20 seconds) between 2018-08-30 and 2018-09-06, indicating automated malware payload execution via rundll32.</div>
+      <div class="atk"><span class="chip">T1218.011</span><span class="chip">T1059.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.70):</b> The factual elements (28 unique rundll32.exe PIDs, PPID 3164, date range, short runtimes) are directly supported by psscan output. However, the EPROCESS list is corrupted (pslist/pstree/cmdline/dlllist/malfind all return empty), so critical corroborating evidence is missing. The claim that this &quot;indicates automated malware payload execution&quot; is an interpretive leap — while the WMI-originated PowerShell chain and rapid-fire rundll32 spawning are suspicious and consistent with malware, legitimate enterprise software deployment (e.g., McAfee ePO agents present on the system) could produce similar patterns. Without command-line arguments identifying the DLLs being executed, the malware attribution remains inference, not direct evidence.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:55%;background:#9a6700"></div><span class="barlbl">0.55</span></div>
+      </div>
+      <div class="claim">Process &quot;subject_srv.exe&quot; (PID 6160, pool name &quot;subject_srv.ex&quot;) runs as a child of services.exe (PPID 536), listens on TCP port 3262 (0.0.0.0 and ::), and has an active ESTABLISHED connection to 172.16.5.50:44262. The process is 32-bit (Wow64=true) on a 64-bit server, was created shortly before image acquisition (2018-09-06T19:25:36), and uses a non-standard port. These characteristics are suspicious and consistent with an unauthorized backdoor or C2 implant, though the destination IP is internal (RFC 1918) and direct code-level confirmation is unavailable due to tool limitations on this image.</div>
+      <div class="atk"><span class="chip">T1543.003</span><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.55):</b> Factual claims (process name, PID, PPID, ports, connection state, Wow64, creation time) are directly confirmed by raw evidence. However, the interpretive claim that this is an &#x27;unauthorized backdoor or C2 implant&#x27; is inferential. Multiple alternative benign explanations exist and cannot be ruled out due to tool limitations. The environment context (other monitoring agents present, internal destination IP) actually leans toward legitimate monitoring software. The analyst&#x27;s own confidence (0.65) already reflected this uncertainty; I assess it lower at 0.55 because the factual foundation for the malicious interpretation is thin.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li><li><code>vol_info</code> <span class="hash">sha256 88e7086181caa6d7…</span></li></ul>
+    </div><h2 style="color:#cf222e">Refuted (1)</h2>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#cf222e">REFUTED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:85%;background:#1a7f37"></div><span class="barlbl">0.85</span></div>
+      </div>
+      <div class="claim">Multiple plugins relying on EPROCESS/VAD structures (vol_pslist, vol_pstree, vol_cmdline, vol_dlllist, vol_svcscan, vol_malfind) return no results despite pool scanners finding 101 processes and 145 network connections, suggesting potential kernel-level tampering (DKOM) to hide malicious activity from standard forensic views.</div>
+      <div class="atk"><span class="chip">T1562.001</span><span class="chip">T1014</span></div>
+      <div class="skeptic"><b>Skeptic (refuted, 0.85):</b> The claim asserts DKOM based on pslist being empty while psscan finds processes. This is a common heuristic but fails the &quot;all-or-nothing&quot; test: real DKOM hides specific malicious processes, not every process in the system. The presence of normal critical system processes (System, smss, csrss, wininit, services, lsass, svchost) in psscan with no exit time confirms they should appear in pslist if the ActiveProcessLinks were intact. Their absence is better explained by a symbol resolution failure, page-table translation issue, or acquisition artifact than by an attack that would crash the OS. The anomalous KeNumberProcessors=0 reinforces that kernel variable enumeration is broadly impaired. While there are suspicious processes visible (subject_srv.ex, Uninstall.exe), the &quot;DKOM to hide all processes&quot; conclusion is unsupported.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 f7e253cac99a942b…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_dlllist</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_svcscan</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_malfind</code> <span class="hash">sha256 a3cbe01dad52836a…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 73bf946ea0df9acf…</span></li></ul>
+    </div>
+<footer>Generated from report.json + audit.jsonl · findings are confirmed/inferred/refuted by an adversarial Skeptic; every finding cites a tool command + output SHA-256.</footer>
+</div></body></html>

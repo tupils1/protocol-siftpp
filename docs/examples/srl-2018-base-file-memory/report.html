@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocol SIFT++ — srl-2018-base-file-memory</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body { font: 15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; margin: 0; background:#f6f8fa; color:#1f2328; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+header h1 { margin:0 0 4px; font-size: 24px; }
+.sub { color:#57606a; font-size: 13px; }
+.meta { margin:14px 0; padding:12px 14px; background:#fff; border:1px solid #d0d7de; border-radius:10px; font-size:13px; }
+.meta code { word-break: break-all; }
+.pill { display:inline-block; padding:2px 10px; border-radius:999px; font-weight:600; font-size:12px; color:#fff; }
+.pill.ok { background:#1a7f37; } .pill.bad { background:#cf222e; }
+.stats { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 24px; }
+.stat { flex:1 1 120px; background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px; text-align:center; }
+.stat .num { font-size:24px; font-weight:700; } .stat .lbl { font-size:11px; color:#57606a; text-transform:uppercase; letter-spacing:.04em; }
+.summary { background:#fff; border:1px solid #d0d7de; border-radius:10px; padding:12px 14px; margin-bottom:20px; }
+h2 { font-size:16px; margin:24px 0 10px; }
+.card { background:#fff; border:1px solid #d0d7de; border-left:5px solid #57606a; border-radius:10px; padding:14px 16px; margin:10px 0; }
+.cardtop { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.badge { color:#fff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:6px; }
+.sev { font-size:12px; color:#57606a; text-transform:uppercase; }
+.bar { position:relative; flex:1 1 140px; height:16px; background:#eaeef2; border-radius:8px; min-width:120px; overflow:hidden; }
+.bar .fill { height:100%; }
+.bar .barlbl { position:absolute; right:6px; top:0; font-size:11px; line-height:16px; color:#1f2328; }
+.claim { font-weight:600; margin-bottom:6px; }
+.chip { display:inline-block; background:#ddf4ff; color:#0969da; border-radius:6px; padding:1px 7px; font-size:11px; margin:2px 4px 2px 0; }
+.skeptic { background:#fff8c5; border:1px solid #eac54f; border-radius:8px; padding:8px 10px; font-size:13px; margin:8px 0; }
+.ev { margin:8px 0 0; padding-left:18px; font-size:12px; }
+.hash { color:#57606a; font-family:ui-monospace,Menlo,Consolas,monospace; }
+code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+footer { margin-top:30px; color:#57606a; font-size:12px; text-align:center; }
+</style></head>
+<body><div class="wrap">
+<header>
+  <h1>Protocol SIFT++ — Incident Report</h1>
+  <div class="sub">Self-verifying autonomous DFIR · case <b>srl-2018-base-file-memory</b></div>
+</header>
+<div class="meta">
+  Evidence: <code>evidence\srl-2018-base-file-memory\extracted\base-file-memory.img</code><br>
+  Evidence SHA-256: <code>4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd</code><br>
+  <span class="pill ok">audit hash chain OK · 302 records</span>
+</div>
+<div class="stats"><div class="stat"><div class="num">4</div><div class="lbl">confirmed</div></div><div class="stat"><div class="num">6</div><div class="lbl">inferred</div></div><div class="stat"><div class="num">0</div><div class="lbl">refuted</div></div><div class="stat"><div class="num">2</div><div class="lbl">iterations</div></div><div class="stat"><div class="num">99</div><div class="lbl">model_calls</div></div><div class="stat"><div class="num">159</div><div class="lbl">tool_calls</div></div></div>
+<div class="summary"><b>Summary.</b> 4 confirmed of 10 findings; 2 self-correction iteration(s); evidence integrity verified.</div>
+<h2 style="color:#1a7f37">Confirmed (4)</h2>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:92%;background:#1a7f37"></div><span class="barlbl">0.92</span></div>
+      </div>
+      <div class="claim">DKOM rootkit: Active process list (EPROCESS ActiveProcessLinks) has been unlinked. vol_pslist and vol_pstree return zero rows, while vol_psscan finds 101 processes via pool scanning. Likewise, vol_cmdline, vol_dlllist, vol_malfind, and vol_svcscan all return zero rows — consistent with kernel-level process hiding.</div>
+      <div class="atk"><span class="chip">T1014</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.92):</b> The raw evidence directly supports the claim. Pool-scanning plugins (psscan: 101 processes, netscan: 145 connections) work normally while ALL EPROCESS ActiveProcessLinks-dependent plugins (pslist, pstree, cmdline, dlllist, malfind, svcscan) return zero rows. This tight binary split between traversal-based and pool-scanning enumeration is the textbook forensic signature of DKOM process-list unlinking. Confidence is 0.92 rather than 1.00 because we cannot directly inspect the Flink/Blink pointers to rule out a rare Volatility3/Windows-6.3 compatibility issue without deeper manual memory carving — but the presence of suspicious processes (subject_srv.ex, ncpa_passive.e/ncpa_listener., massed rundll32.exe) in the pool scan data provides corroborating context.</div>
+      <ul class="ev"><li><code>vol_pslist</code> <span class="hash">sha256 d9163d874acf3f29…</span></li><li><code>vol_pstree</code> <span class="hash">sha256 d9163d874acf3f29…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_cmdline</code> <span class="hash">sha256 d9163d874acf3f29…</span></li><li><code>vol_dlllist</code> <span class="hash">sha256 d9163d874acf3f29…</span></li><li><code>vol_malfind</code> <span class="hash">sha256 d9163d874acf3f29…</span></li><li><code>vol_svcscan</code> <span class="hash">sha256 d9163d874acf3f29…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:95%;background:#1a7f37"></div><span class="barlbl">0.95</span></div>
+      </div>
+      <div class="claim">PowerShell C2 chain: powershell.exe (PID 4072) was spawned by WmiPrvSE.exe (PID 1196) on 2018-08-28 22:08:25. It then spawned a 32-bit powershell.exe (PID 3164, Wow64), which spawned dozens of short-lived rundll32.exe processes across Aug 30–Sep 6 2018. Both PowerShell processes have TCP connections to 172.16.4.10:8080 — PID 4072 (CLOSED) and PID 3164 (CLOSE_WAIT).</div>
+      <div class="atk"><span class="chip">T1059.001</span><span class="chip">T1105</span><span class="chip">T1571</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.95):</b> All four factual claims are directly confirmed by the raw evidence: (a) psscan shows powershell.exe PID 4072 with PPID 1196 (WmiPrvSE.exe) and CreateTime 2018-08-28T22:08:25; (b) psscan shows powershell.exe PID 3164 with PPID 4072, Wow64=true (32-bit), CreateTime 2018-08-28T22:08:26; (c) psscan shows 20+ short-lived rundll32.exe processes with PPID 3164 spanning 2018-08-30 through 2018-09-06, with lifespans of 2-38 seconds each; (d) netscan shows PID 4072 → 172.16.4.10:8080 (CLOSED) and PID 3164 → 172.16.4.10:8080 (CLOSE_WAIT). The &quot;C2 chain&quot; label is an interpretive overlay on these facts but is well-supported by the classic attack pattern (WMI spawn → PowerShell → 32-bit PowerShell → rundll32 activity → HTTP C2 channel). Confidence is 0.95 rather than 1.0 only because cmdline is unavailable to confirm the specific commands, and malfind couldn&#x27;t confirm injection.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:85%;background:#1a7f37"></div><span class="barlbl">0.85</span></div>
+      </div>
+      <div class="claim">Suspicious Uninstall.exe execution: cmd.exe (PID 4808) spawned Uninstall.exe (PID 2340) on 2018-09-06 16:36:33. The binary ran for only 2 seconds and made a TCP connection to 172.16.7.12:135 (RPC endpoint mapper) before exiting — consistent with lateral movement or reconnaissance.</div>
+      <div class="atk"><span class="chip">T1021.003</span><span class="chip">T1047</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.85):</b> The factual elements (cmd.exe PID 4808 spawned Uninstall.exe PID 2340, 2-second runtime, TCP to 172.16.7.12:135) are all directly supported by psscan and netscan evidence. The &quot;lateral movement/recon&quot; label is inferential but reasonable given the RPC endpoint mapper target, cmd.exe parentage, and extremely short execution window. Confidence is 0.85 rather than higher because (a) cmd.exe&#x27;s parent PID 6956 is missing from psscan, leaving the launch chain incomplete; (b) pslist/cmdline/malfind/svcscan all returned empty, limiting corroboration; and (c) without the binary path or hash, we cannot definitively rule out a legitimate but oddly-behaved uninstaller.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#1a7f37">CONFIRMED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:85%;background:#1a7f37"></div><span class="barlbl">0.85</span></div>
+      </div>
+      <div class="claim">ngentask.exe (PID 7092) established two TCP connections to 172.16.4.10:8080 within its 1-second lifespan — the same destination IP:port contacted by two long-running powershell.exe processes (PIDs 3164 and 4072). powershell.exe PID 4072 was spawned via WMI (parent WmiPrvSE.exe PID 1196); its child powershell.exe PID 3164 spawned approximately 28 short-lived rundll32.exe instances (2–38 seconds each) over 7 days. The destination 172.16.4.10:8080 is contacted exclusively by these three processes. ngentask.exe — a .NET compilation tool — has no legitimate operational reason for outbound HTTP connections. While cmdline and DLL data are unavailable to confirm C2 commands, the aggregate behavioral pattern is highly anomalous and consistent with attacker activity.</div>
+      <div class="atk"><span class="chip">T1047</span><span class="chip">T1059.001</span><span class="chip">T1071.001</span><span class="chip">T1218.011</span><span class="chip">T1105</span></div>
+      <div class="skeptic"><b>Skeptic (confirmed, 0.85):</b> Every factual sub-claim in the finding is directly supported by raw evidence: (a) ngentask.exe PID 7092 has two CLOSED TCPv4 connections to 172.16.4.10:8080 (LocalPorts 56322, 56324) in netscan; (b) psscan shows its lifespan is exactly 1 second (2018-09-06T07:27:10→07:27:11); (c) powershell.exe PID 3164 (CLOSE_WAIT on LocalPort 56932) and PID 4072 (CLOSED on LocalPort 54794) both connect to the same 172.16.4.10:8080; (d) PID 4072 PPID=1196 (WmiPrvSE.exe) confirms WMI spawning; (e) PID 3164 PPID=4072 confirms parent-child; (f) exactly 28 rundll32.exe entries with PPID=3164 in psscan, spanning Aug 30–Sep 6, with lifespans from 2 to 38 seconds; (g) no other process in the 145-entry netscan contacts 172.16.4.10 on any port. The assessment that ngentask.exe has no legitimate reason for outbound HTTP connections is well-founded (NGEN compiles on-disk assemblies, never fetches over HTTP). The key limitation — empty EPROCESS list preventing cmdline/DLL/injection analysis — is acknowledged by the investigator and does not weaken the confirmed network/process-pool facts. Confidence is 0.85 rather than higher only because Created=null on all four 172.16.4.10:8080 connections and the ngentask.exe parent (PPID 2536) is absent from psscan, leaving minor timeline and ancestry gaps.</div>
+      <ul class="ev"><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li></ul>
+    </div><h2 style="color:#9a6700">Inferred (6)</h2>
+    <div class="card" style="border-left-color:#cf222e">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">critical</span>
+        <div class="bar"><div class="fill" style="width:75%;background:#9a6700"></div><span class="barlbl">0.75</span></div>
+      </div>
+      <div class="claim">Backdoor process &quot;subject_srv.ex&quot; (PID 6160): Running as a child of services.exe (PPID 536), 32-bit (Wow64) on 64-bit OS, 12 threads, created 2018-09-06 19:25:36. Listening on TCP port 3262 (0.0.0.0 and ::), with an ESTABLISHED C2 connection to 172.16.5.50:44262.</div>
+      <div class="atk"><span class="chip">T1543.003</span><span class="chip">T1571</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.75):</b> The factual elements of the claim are solidly confirmed by psscan and netscan: process &quot;subject_srv.ex&quot; (PID 6160, PPID 536/services.exe), Wow64=true, 12 threads, created 2018-09-06 19:25:36, listening on TCP 3262 (0.0.0.0 + ::), and an ESTABLISHED connection to 172.16.5.50:44262. However, critical plugins (pslist, cmdline, dlllist, malfind, svcscan, pstree) all return empty — the memory image appears to have EPROCESS list corruption, limiting analysis to pool-scanning artifacts only. The &quot;backdoor&quot; classification and &quot;C2&quot; label are plausible inferences but cannot be directly proven: the process could be a custom enterprise monitoring agent, an NCPA-adjacent component, or another legitimate tool. Without cmdline, DLL list, binary path, or injection evidence, calling it definitively a backdoor overreaches the available evidence. Confidence reduced from 1.00 to 0.75 due to these evidential gaps.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:72%;background:#9a6700"></div><span class="barlbl">0.72</span></div>
+      </div>
+      <div class="claim">Rundll32 beaconing/execution pattern: The 32-bit powershell.exe (PID 3164) spawned at least 28 rundll32.exe processes in rapid bursts across multiple days (Aug 30, Aug 31, Sep 5, Sep 6 2018). Each rundll32.exe ran for only 2–5 seconds and had 0 threads at capture time, consistent with a C2 beacon or staged payload execution model.</div>
+      <div class="atk"><span class="chip">T1218.011</span><span class="chip">T1059.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.72):</b> The factual elements of the claim are largely corroborated by psscan: powershell.exe PID 3164 is 32-bit (Wow64=true), spawned 28 short-lived 64-bit rundll32.exe children across four days, all with 0 threads at capture. However, the &quot;beaconing/C2&quot; interpretation cannot be directly confirmed because cmdline/dlllist/malfind all failed (empty EPROCESS list), no rundll32 network artifacts exist in netscan, a minority of runtimes exceed the &quot;2–5 seconds&quot; claim, and alternative benign explanations (scheduled monitoring tasks) exist on this managed server. The finding is plausible but the evidence quality does not warrant the 1.00 confidence claimed.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:85%;background:#1a7f37"></div><span class="barlbl">0.85</span></div>
+      </div>
+      <div class="claim">Common C2 infrastructure at 172.16.4.10:8080: At least three separate processes connected to this IP/port — powershell.exe PID 3164 (CLOSE_WAIT), powershell.exe PID 4072 (CLOSED), and ngentask.exe PID 7092 (two CLOSED connections, ephemeral ports 56322 and 56324). This indicates a shared C2 server used by multiple compromised processes.</div>
+      <div class="atk"><span class="chip">T1571</span><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.85):</b> The factual core — three processes (powershell.exe 3164, powershell.exe 4072, ngentask.exe 7092) connecting to 172.16.4.10:8080 — is directly confirmed by netscan with 4 distinct TCP sockets. Psscan independently confirms the process names, PIDs, and relationships. However, the leap to &quot;C2 infrastructure&quot; is inferential: we cannot see packet payloads, process command lines, or loaded DLLs (all related plugins fail on this image). The circumstantial evidence strongly favors malicious C2 — powershell.exe 4072 was WMI-launched (PPID WmiPrvSE.exe 1196), powershell.exe 3164 spawned ~25 short-lived rundll32.exe children (classic Cobalt Strike pattern), and ngentask.exe lived only 1 second while making two TCP connections (anomalous for legitimate .NET NGEN). But without payload inspection or code analysis, a legitimate internal proxy/application server at 172.16.4.10:8080 cannot be logically excluded. Hence, inferred rather than confirmed.</div>
+      <ul class="ev"><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#bc4c00">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">high</span>
+        <div class="bar"><div class="fill" style="width:75%;background:#9a6700"></div><span class="barlbl">0.75</span></div>
+      </div>
+      <div class="claim">WMI-based persistence: The initial PowerShell C2 process (PID 4072, powershell.exe) was spawned by WmiPrvSE.exe (PID 1196) on 2018-08-28 22:08:25. WmiPrvSE.exe is the WMI Provider Host, and spawning PowerShell from it is a well-known technique for WMI event subscription persistence (e.g., __EventFilter / __EventConsumer bindings).</div>
+      <div class="atk"><span class="chip">T1546.003</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.75):</b> The factual core — PID 4072 (powershell.exe, PPID 1196/WmiPrvSE.exe, CreateTime 2018-08-28 22:08:25) — is directly supported by psscan. Netscan confirms both PowerShell processes had TCP connections to 172.16.4.10:8080, supporting C2 characterization. However, the specific claim of &quot;__EventFilter / __EventConsumer bindings&quot; (WMI event subscription persistence) is not directly evidenced. Multiple plugins (pslist, pstree, cmdline, svcscan, malfind) returned empty results, indicating significant memory structure corruption. The evidence comes from a single memory view (psscan) with no corroborating EPROCESS list data. Alternative explanations for WmiPrvSE spawning PowerShell (legitimate WMI administration, scheduled tasks via WMI, WinRM) cannot be excluded. The persistence mechanism is plausible and consistent with the evidence, but not directly proven.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:65%;background:#9a6700"></div><span class="barlbl">0.65</span></div>
+      </div>
+      <div class="claim">Suspicious ngentask.exe C2 connections: ngentask.exe (PID 7092, parent PID 2536) ran briefly on 2018-09-06 07:27:10–07:27:11 and made two TCP connections to 172.16.4.10:8080 (the shared C2 server). While ngentask.exe is a legitimate .NET NGEN task binary, its use of the C2 channel suggests it was either hijacked or is a renamed malicious binary.</div>
+      <div class="atk"><span class="chip">T1571</span><span class="chip">T1036.003</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.65):</b> The raw evidence from psscan confirms ngentask.exe (PID 7092, PPID 2536) existed briefly (07:27:10–07:27:11 UTC). Netscan independently confirms two TCPv4 connections from PID 7092 to 172.16.4.10:8080 (CLOSED). However, the C2 interpretation rests on powershell.exe PIDs 3164/4072 also connecting to the same server. No direct evidence confirms the binary is malicious, hijacked, or renamed — malfind, dlllist, and cmdline all returned empty due to the degraded memory state (pslist also empty). The parent PID 2536 is unidentifiable. The connections are CLOSED, providing no timing data to link them precisely to the process&#x27;s 1-second window. These gaps prevent full confirmation but the correlation with powershell C2 activity makes the inference plausible.</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li></ul>
+    </div>
+    <div class="card" style="border-left-color:#9a6700">
+      <div class="cardtop">
+        <span class="badge" style="background:#9a6700">INFERRED</span>
+        <span class="sev">medium</span>
+        <div class="bar"><div class="fill" style="width:55%;background:#9a6700"></div><span class="barlbl">0.55</span></div>
+      </div>
+      <div class="claim">ngentask.exe (PID 7092, PPID 2536) established two TCP connections to 172.16.4.10:8080 — the same IP:port used by powershell.exe C2 processes (PIDs 3164 and 4072). The connections are correlated with malicious C2 infrastructure, but no direct evidence confirms the ngentask.exe binary itself was hijacked, replaced, or otherwise tampered with.</div>
+      <div class="atk"><span class="chip">T1043</span><span class="chip">T1071.001</span></div>
+      <div class="skeptic"><b>Skeptic (inferred, 0.55):</b> The claim contains two layers: factual (connections exist, same IP:port) and interpretive (C2/malicious). The factual layer is directly confirmed by netscan and psscan. The interpretive layer relies on labeling powershell.exe as C2, but with cmdline/dlllist/malfind all returning empty, no raw evidence proves powershell.exe was executing C2 commands — only that it connected to the same IP:port. Alternative explanations (internal web service, monitoring agent, McAfee-adjacent infrastructure on port 8080 near port 8081) cannot be ruled out. The investigator&#x27;s own 0.65 confidence and admission of no tampering evidence align with this assessment. Confidence 0.55 reflects: connections confirmed (+), IP:port correlation confirmed (+), but C2 label unproven and alternative explanations viable (−).</div>
+      <ul class="ev"><li><code>vol_psscan</code> <span class="hash">sha256 b7e9c4731b1c230f…</span></li><li><code>vol_netscan</code> <span class="hash">sha256 43647f01f3d9935c…</span></li></ul>
+    </div>
+<footer>Generated from report.json + audit.jsonl · findings are confirmed/inferred/refuted by an adversarial Skeptic; every finding cites a tool command + output SHA-256.</footer>
+</div></body></html>
