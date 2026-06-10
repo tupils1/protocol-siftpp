@@ -7,8 +7,11 @@ gitignored `analysis/`; curated copies for review are committed under
 - `docs/examples/srl-2018-base-file-memory/audit.jsonl` - SANS, Windows (302 records)
 - `docs/examples/srl-2018-linux/audit.jsonl` - SANS, Linux reproduction (256 records)
 - `docs/examples/m57-pat-2009-12-05/audit.jsonl` - DigitalCorpora M57 (265 records)
+- `docs/examples/srl-2018-live/audit.jsonl` - SANS, the on-camera demo-video run,
+  Linux (230 records)
 
-Verify all three at once: `uv run siftpp-verify`.
+Verify all four at once: `uv run siftpp-verify`. Pretty-print any of them:
+`uv run siftpp-trace <audit.jsonl> [--replay] [--all]`.
 
 ## Final Run Summary
 
@@ -59,6 +62,11 @@ Linux reproduction (same image, sha256-identical):
 M57 Pat (DigitalCorpora, public answer key):
   4 confirmed of 9 findings; 2 self-correction iterations; audit (True, 265).
   Confirmed findings match the documented Advanced Keylogger -> P/R/F1 = 1.00.
+Demo-video run (srl-2018-live, recorded on camera, Linux/WSL2 Ubuntu 22.04):
+  4 confirmed of 8 findings; 1 self-correction iteration; audit (True, 230).
+  22.3 minutes unattended; 79 model calls (358,745 tokens), 116 tool calls.
+  The Skeptic downgraded three over-broad claims (one 0.70 -> 0.30) and the
+  re-investigated, narrower claims were confirmed (0.82, 0.90).
 ```
 
 ## Verify The Hash Chain
@@ -84,12 +92,13 @@ sha256_after:  4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd
 unchanged: true
 ```
 
-## Extract A Short Demo View
+## Replay The Investigation Story
 
-```powershell
-uv run python -c `
-  "import json; p='analysis/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('n'), e.get('reason'), e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
+```bash
+uv run siftpp-trace docs/examples/srl-2018-live/audit.jsonl --replay
 ```
 
-Use this in the video to show inter-agent review and self-correction without
-scrolling through the full 302-record log.
+Verifies the chain, then prints one line per story event (findings, Skeptic
+reviews, iterations, run start/end) — the same view the demo video shows.
+Add `--all` to include every tool and model call. During a live run,
+`siftpp-investigate --echo` streams the identical lines as they are written.

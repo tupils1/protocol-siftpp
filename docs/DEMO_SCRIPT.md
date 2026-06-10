@@ -1,100 +1,61 @@
-# 5-Minute Demo Script (read-aloud)
+# Demo Video — What It Shows, and How to Reproduce Every Beat
 
-Read each **SAY** line aloud; perform each **DO** action on screen. Times are
-cumulative; target ~5:00. Every command is **no-API-key** and copy-pastes from
-the README.
+The demo is a **screencast of live terminal execution** (per the FIND EVIL!
+rules: not slides, not a marketing video). It was recorded in a Linux terminal
+(Ubuntu 22.04 / WSL2 — the SANS SIFT Workstation base OS) running the repo
+exactly as documented. Keystrokes were auto-typed for pacing, but **every
+command executes for real, on the real SANS evidence image**, in one
+continuous session per act. There is a single time-cut while the autonomous
+run finishes (~22 minutes, marked on screen and in the narration). Narration
+is a Microsoft neural TTS voice.
 
-**Pre-stage (before recording):** run `uv sync`; in a second terminal start the
-GUI with `uv run siftpp-gui` (so it's instant when you switch to it); use a large
-terminal font; make sure no API key is visible on screen.
+The on-camera investigation (`--case-id srl-2018-live`) is committed in full
+at `docs/examples/srl-2018-live/` (report + 230-record audit log), so every
+number in the video can be re-verified offline.
 
----
+## Beat-by-beat
 
-## 0:00-0:25 - Hook
-**DO:** Show the GitHub repo (the README scorecard at the top).
-**SAY:**
-> "This is Protocol SIFT++, an autonomous memory-forensics agent built for one
-> thing: being trustworthy enough to run unsupervised on evidence. It makes three
-> claims — it cannot alter evidence, it catches its own mistakes, and it keeps a
-> tamper-evident chain of custody. I'm going to prove all three, live, in five
-> minutes."
+| # | On-screen command | What it proves |
+|---|---|---|
+| A1 | `uname -a` | Linux terminal, as the rules require |
+| A2 | `uv run siftpp-verify` | whole proof suite green in one command, no API key |
+| A3 | `uv run siftpp-investigate --provider deepseek --echo --evidence ~/ev/base-file-memory.img --out analysis/srl-2018-live --case-id srl-2018-live` | live autonomous run on the SANS image; `--echo` streams every audit event (tool calls + output SHA-256, model calls + tokens) as it is hash-chained to disk |
+| — | *time cut: “the run finished unattended” (22 min)* | |
+| B1 | `head -n 6 analysis/srl-2018-live/report.md` | verdict: 4 confirmed of 8 findings, 1 self-correction iteration, evidence integrity verified |
+| B2 | `uv run siftpp-trace analysis/srl-2018-live/audit.jsonl --replay` | the self-correction sequence, replayed from the tamper-evident log: Skeptic downgrades (0.7 → 0.3), iteration #1 re-investigates, narrower claims survive |
+| B3 | `sed -n '/^## Refuted/,$p' docs/examples/srl-2018-linux/report.md \| head -7` | the flagship catch: an earlier run confirmed a “DKOM rootkit” at 0.92 — an independent Linux re-run **refuted its own confirmation** as a Volatility symbol artifact |
+| B4 | `uv run siftpp-spoliation-test` | 14/14 destructive attempts refused live; evidence SHA-256 unchanged |
+| B5 | `uv run siftpp-tamper-test` | edit one audit record → hash chain breaks at exactly that record |
+| B6 | `sed -n '/^## Confirmed/,/^## Inferred/p' docs/examples/m57-pat-2009-12-05/report.md \| grep -E '^##\|^###' \| head -3` | second, public-answer-key case (M57): confirmed exactly the documented keylogger — precision/recall 1.00 |
+| B7 | `uv run siftpp-trace docs/examples/srl-2018-base-file-memory/audit.jsonl \| head -1` | close: any log verifies in one line — `hash chain OK (302 records)` |
 
-## 0:25-1:15 - One command, everything green
-**DO:** Run:
+## Reproduce it yourself
+
+Everything in the video is a repo command. The no-key path:
+
 ```bash
-uv run siftpp-verify
+uv run siftpp-verify          # A2: tests + 3 audit chains + spoliation + tamper
+uv run siftpp-trace docs/examples/srl-2018-live/audit.jsonl --replay   # B2 on the committed copy
+uv run siftpp-spoliation-test # B4
+uv run siftpp-tamper-test     # B5
 ```
-**DO:** Let the `[PASS]` checklist finish.
-**SAY:**
-> "One command runs the whole proof suite. The tests pass. All three real-case
-> audit logs verify — our SANS case on Windows and on Linux, plus an independent
-> public case. The live spoliation test refused fourteen of fourteen attacks with
-> the evidence unchanged, and the tamper test caught an edited record. No API key
-> — anyone can run this from the README."
 
-## 1:15-2:20 - Attack it live (the hero beat)
-**DO:** Switch to the browser at `http://127.0.0.1:8732`. Click
-**"Try to dump / delete / exfiltrate the evidence."**
-**SAY:**
-> "Most agents just promise they'll behave. Watch me try to make this one
-> misbehave. I'm telling the live server to dump memory, delete the image, run a
-> shell, and exfiltrate — everything a hijacked agent would attempt."
-**DO:** Point at the green result (14/14 refused, evidence unchanged).
-**SAY:**
-> "Fourteen of fourteen refused — because those tools physically don't exist in
-> the read-only server. The evidence's SHA-256 is identical before and after.
-> That's an architectural guarantee, not a prompt."
-**DO:** Click **"Tamper with the audit log."**
-**SAY:**
-> "Now I edit one record in the audit log. The hash chain catches it instantly,
-> broken at the exact record. That is a court-grade chain of custody."
+The live run (A3/B1) needs a `DEEPSEEK_API_KEY` (or `--provider anthropic`)
+and the SANS image from `uv run siftpp-download-case` — see
+`docs/TRY_IT_OUT.md`.
 
-## 2:20-3:25 - It catches its own hallucination (the flagship)
-**DO:** Open `docs/examples/srl-2018-linux/report.md`; scroll to the **Refuted** section.
-**SAY:**
-> "Here's the part I'm proudest of. On the SANS case, the agent first *confirmed*
-> a kernel rootkit — DKOM process hiding — at 0.92 confidence. It looked right:
-> the process list was empty while pool scanning found 101 processes."
-**SAY:**
-> "But on an independent re-run, the Skeptic refuted its own conclusion. It caught
-> an impossible value — zero processors — and that *every* process was missing,
-> including System. Real rootkits hide specific processes; hiding all of them
-> would crash the machine. The real answer was a Volatility symbol artifact, not a
-> rootkit. The system caught its own confident mistake. That is the whole point."
+## Production notes (transparency)
 
-## 3:25-4:20 - Proven on a public answer key (M57)
-**DO:** Open `docs/examples/m57-pat-2009-12-05/report.md`.
-**SAY:**
-> "To show the accuracy isn't self-graded, we ran a second, independent, publicly
-> documented case — DigitalCorpora's M57. Its documented compromise is the
-> Advanced Keylogger, and the agent confirmed exactly that: the keylogger process
-> and its DLL injected into the Windows shell."
-**SAY:**
-> "Against that public answer key, the confirmed findings score precision and
-> recall of one-point-zero. And just as important, it refused to confirm what this
-> image can't prove — like exfiltration — leaving those as inferred. High
-> accuracy, without overstating."
-
-## 4:20-5:00 - Close
-**DO:** Run:
-```bash
-uv run python -c "from protocol_siftpp.audit import verify_chain; print(verify_chain('docs/examples/srl-2018-base-file-memory/audit.jsonl'))"
-```
-**DO:** Show `(True, 302)`.
-**SAY:**
-> "Every finding cites the exact command and the SHA-256 of its output, written
-> into the hash-chained log you just watched verify clean. Protocol SIFT++ doesn't
-> ask you to trust it — it lets you attack it, check it, and reproduce it. That's
-> autonomous incident response a senior analyst, and a court, could actually rely
-> on. Thanks for watching."
-
----
-
-## Backup beat (if a command is slow or you have spare time)
-Show the self-correction trace from the real audit log:
-```bash
-uv run python -c "import json; p='docs/examples/srl-2018-base-file-memory/audit.jsonl'; [print(e['seq'], e['event'], e.get('finding_id'), e.get('status'), e.get('confidence')) for e in map(json.loads, open(p, encoding='utf-8')) if e['event'] in ('finding_submitted','review_submitted','iteration')]"
-```
-This prints the `ngentask.exe` correction: the Investigator over-claimed C2, the
-Skeptic downgraded it twice across two `iteration` events, and it converged on a
-narrower confirmed behavioral claim.
+- Recorded with ffmpeg (gdigrab) from a real WezTerm window running WSL2
+  Ubuntu 22.04; 1080p output downscaled from a 2432×1368 capture.
+- The auto-typing harness (`video/demo_*.sh`) prints a prompt, types the
+  command with human-ish jitter, then `eval`s it — the outputs on screen are
+  genuine, unedited tool output.
+- One cut joins the start of the autonomous run to its finish; the run kept
+  executing unattended in the same terminal between the two takes
+  (`video/markers_*.log` carries the wall-clock timestamps).
+- Narration: edge-tts `en-US-ChristopherNeural`; subtitles burned from the
+  same synthesis pass (`video/captions.srt`).
+- After recording, the on-camera run's audit chain was added to
+  `siftpp-verify` as a fourth committed chain — so a fresh clone now shows
+  four `audit chain` PASS lines where the video shows three.

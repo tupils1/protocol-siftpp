@@ -34,13 +34,13 @@ Accomplishments → What Is Next).
 | # | Deliverable | Where |
 |---|---|---|
 | 1 | Public repo (MIT) | repo link above |
-| 2 | Demo video (<=5 min, real case, >=1 self-correction) | `[VIDEO URL]` — script: `docs/DEMO_SCRIPT.md` |
+| 2 | Demo video (<=5 min, live terminal screencast, real case, >=1 self-correction) | `[VIDEO URL]` — beat-by-beat breakdown: `docs/DEMO_SCRIPT.md`; the on-camera run is committed at `docs/examples/srl-2018-live/` |
 | 3 | Architecture diagram | `docs/architecture.png` (source: `docs/ARCHITECTURE.md`) |
 | 4 | Written description | the Story above |
 | 5 | Dataset documentation | `docs/DATASET.md` |
 | 6 | Accuracy + integrity report | `docs/ACCURACY_REPORT.md` |
 | 7 | Try-it-out instructions | `docs/TRY_IT_OUT.md` |
-| 8 | Agent execution logs | `docs/examples/srl-2018-base-file-memory/audit.jsonl` (302 records, hash-chain verified) |
+| 8 | Agent execution logs | `docs/examples/` — four hash-chain-verified audit logs (302 / 256 / 265 / 230 records), incl. the on-camera demo run; summary in `docs/RUN_LOGS.md` |
 
 ## Differentiators to emphasize on the page
 

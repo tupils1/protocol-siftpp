@@ -77,6 +77,14 @@ plugins, no write-oriented tools, and no upload capability. Each tool call
 checks evidence size and mtime before and after execution, records the exact
 argv, and hashes the full tool output for later citation.
 
+Platform and framework: the project was built end to end with Claude Code
+(running under OpenClaw), and the runtime is the comparable agentic
+architecture the rules permit — MCP (Claude Code's native tool protocol) plus
+an Anthropic-SDK agent loop. It runs on the SANS SIFT Workstation: the Linux
+path is verified on Ubuntu 22.04 (SIFT's base OS) with the same uv + Python +
+Volatility 3 stack, and the demo video is recorded in that Linux terminal.
+`docs/TRY_IT_OUT.md` has the SIFT/Linux quick start.
+
 ## What We Learned
 
 The strongest lesson was that correction needs to happen in the loop, not only
