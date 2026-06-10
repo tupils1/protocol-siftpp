@@ -1,0 +1,403 @@
+{
+  "case_id": "srl-2018-live",
+  "evidence_path": "/home/dministrator/ev/base-file-memory.img",
+  "evidence_sha256": "4c192e5dc751350777be5ca3dec8bd264baaba73e08e98d759825983b5ce22fd",
+  "findings": [
+    {
+      "id": "674130619ade",
+      "claim": "Suspicious backdoor process 'subject_srv.ex' (PID 6160) running as a Windows service (PPID services.exe/536), listening on TCP port 3262 with an active ESTABLISHED connection to 172.16.5.50:44262, and a prior CLOSED connection to 172.16.5.25:5682.",
+      "severity": "critical",
+      "confidence": 0.88,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "73bf946ea0df9acf44c812a018ddcac7f54a6404966891f0ebfc5e54b4253e9c",
+          "output_bytes": 39885,
+          "ran_at": "2026-06-10T06:40:15.349360Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1543.002",
+        "T1571",
+        "T1041"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.88,
+        "refutation_attempt": "Attempted to refute by: (1) checking whether subject_srv.ex matches any known legitimate binary naming (it doesn't match McAfee agents, NSClient++, or Windows defaults); (2) attempting svcscan to verify service registration (returned empty, so the \"Windows service\" claim is only inferred from PPID, not directly shown); (3) confirming pslist is corrupt (0 rows), meaning all process enumeration relies on pool-scan — the investigator correctly used psscan but didn't note this limitation; (4) verifying the CLOSED connection port to 172.16.5.25:5682 uses ephemeral 59300, not 3262 (consistent but worth noting).",
+        "rationale": "All five factual claims (process name/PID, PPID=services.exe/536, TCP 3262 LISTENING, ESTABLISHED to 172.16.5.50:44262, CLOSED to 172.16.5.25:5682) are directly confirmed by psscan and netscan. The \"Windows service\" label is inferred from PPID but unverifiable (svcscan returns empty). The \"backdoor\" characterization is interpretive but consistent with the observed behavior. Confidence reduced from 0.95 to 0.88 due to: reliance on pool-scan rather than EPROCESS walk, empty svcscan preventing service registration confirmation, and inability to run cmdline/dlllist/malfind for further corroboration.",
+        "reviewed_at": "2026-06-10T06:44:20.034993Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:41:15.401421Z",
+      "updated_at": "2026-06-10T06:44:29.600296Z"
+    },
+    {
+      "id": "e11e34fee655",
+      "claim": "PowerShell-based attack chain: WmiPrvSE.exe (PID 1196) spawned powershell.exe (PID 4072, 64-bit), which spawned a 32-bit powershell.exe (PID 3164, Wow64=true), which then spawned at least 28 short-lived rundll32.exe instances (each lasting 2-5 seconds) between 2018-08-30 and 2018-09-06 — a classic Cobalt Strike / Empire process injection pattern.",
+      "severity": "critical",
+      "confidence": 0.65,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1047",
+        "T1059.001",
+        "T1218.011",
+        "T1055"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.65,
+        "refutation_attempt": "I independently re-ran psscan, netscan, pslist, pstree, cmdline, malfind, and dlllist. Key refutation checks: (1) psscan confirms the parent chain WmiPrvSE(1196) → powershell(4072,64b) → powershell(3164,32b) → 28 rundll32 instances, and the date range Aug 30–Sep 6. (2) However, malfind returned zero findings for PIDs 4072 and 3164 (and globally), so there is no direct evidence of code injection — the \"process injection pattern\" label is unsupported. (3) cmdline, dlllist, pstree, and pslist all returned empty — no command-line arguments or DLL lists to confirm malicious PowerShell payloads or Cobalt Strike/Empire artifacts. (4) The claim \"each lasting 2–5 seconds\" is inaccurate: PID 4376 ran 38s, PID 6088 21s, PID 3260 21s, PID 3500 15s, PID 3548 7s. (5) netscan shows connections to 172.16.4.10:8080 from both PowerShell processes, which is suspicious but not diagnostic of Cobalt Strike/Empire specifically — 8080 is a generic HTTP-alt port used by many tools. The process tree is anomalous and consistent with a PowerShell-based attack, but the specific attribution to Cobalt Strike/Empire and the injection claim exceed what the cited evidence (psscan alone) can demonstrate.",
+        "rationale": "The parent-child chain and run count are directly corroborated by psscan. However, the investigator's claim goes beyond what psscan can show: no injection was found (malfind empty), no command-line evidence exists to confirm Cobalt Strike/Empire, and the \"2-5 second\" lifetime characterization is overstated. The finding is plausible for a PowerShell-based attack chain but over-attributed and over-precise for the available evidence.",
+        "reviewed_at": "2026-06-10T06:46:17.190956Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:41:23.255538Z",
+      "updated_at": "2026-06-10T06:46:27.929868Z"
+    },
+    {
+      "id": "40d6606f37c2",
+      "claim": "Both PowerShell processes communicated with C2 server 172.16.4.10 on TCP port 8080: powershell.exe (PID 4072) had a CLOSED connection and powershell.exe (PID 3164, 32-bit) had a connection in CLOSE_WAIT state. Additionally, ngentask.exe (PID 7092) also contacted the same server on port 8080.",
+      "severity": "high",
+      "confidence": 0.85,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "73bf946ea0df9acf44c812a018ddcac7f54a6404966891f0ebfc5e54b4253e9c",
+          "output_bytes": 39885,
+          "ran_at": "2026-06-10T06:40:15.349360Z"
+        },
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1071.001",
+        "T1571"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.85,
+        "refutation_attempt": "I independently re-ran vol_netscan, vol_psscan, vol_pslist, vol_pstree, vol_cmdline, vol_malfind, and vol_info. I searched for: (1) any legitimate system process also connecting to 172.16.4.10:8080 that would suggest it's a benign internal server, (2) alternative explanations for ngentask.exe network connections, (3) whether the connections could be artifacts of normal enterprise software. I found: no other processes connecting to 172.16.4.10:8080 besides the three named. The host has services like macmnsvc.exe (McAfee, listening on 8081), nscp.exe (NSClient++ on 5666), and rubyw.exe (Nagios agent on 10.10.254.1:61613) — none use 172.16.4.10:8080. pslist/pstree/cmdline all returned empty (likely due to EPROCESS list corruption), but psscan via pool scanning confirmed all three processes. malfind returned empty for both PowerShell PIDs. The C2 label cannot be directly proven from netscan alone (no packet contents), but the connection pattern — 64-bit PowerShell spawning 32-bit PowerShell, both contacting the same IP:port, plus ngentask.exe (which has no legitimate reason for TCP connections) also connecting — strongly supports the inference.",
+        "rationale": "The factual claims about connection tuples (process, PID, remote IP:port, state) are all directly confirmed by my independent netscan re-run. The C2 classification is an inference: netscan shows only connection metadata, not the content or purpose of the communication. No legitimate processes were observed connecting to 172.16.4.10:8080, and the pattern (parent 64-bit PowerShell → child 32-bit PowerShell, both + ngentask.exe to same IP:8080) is highly consistent with C2 activity, but the cited tools (netscan, psscan) alone cannot definitively prove 172.16.4.10 is a C2 server vs. another type of malicious or misconfigured internal server.",
+        "reviewed_at": "2026-06-10T06:48:20.628575Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:41:30.765698Z",
+      "updated_at": "2026-06-10T06:48:29.908030Z"
+    },
+    {
+      "id": "b46435c7b4b9",
+      "claim": "WMI-based compromise vector: WmiPrvSE.exe (PID 1196) is the parent of a 64-bit PowerShell (PID 4072) that launched the attack chain, indicating the adversary used Windows Management Instrumentation (WMI) to trigger the initial PowerShell execution — consistent with WMI-based lateral movement or persistence.",
+      "severity": "high",
+      "confidence": 0.9,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1047"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.9,
+        "refutation_attempt": "Checked for stale PPID / PID reuse (both processes still active with consistent timestamps — rejected); checked for legitimate admin WMI use (the 64→32 bit PS cascade + rundll32 beaconing to 172.16.4.10:8080 rules out routine administration); checked for PPID spoofing (WmiPrvSE is the native parent for WMI-launched processes, spoofing unnecessary); checked whether pslist/pstree/cmdline could provide alternative process context (all returned empty — psscan is the authoritative source here).",
+        "rationale": "psscan directly confirms WmiPrvSE.exe (PID 1196, PPID 600) is the parent of powershell.exe (PID 4072, 64-bit, Wow64=false). PID 4072 then spawned powershell.exe (PID 3164, 32-bit, Wow64=true) which spawned ~30 short-lived rundll32.exe instances. Netscan shows both PowerShell processes connecting to 172.16.4.10:8080. WmiPrvSE.exe as parent of PowerShell is the canonical forensic indicator of WMI-based process creation (Win32_Process.Create or __EventFilter/__EventConsumer). The multi-stage PowerShell → rundll32 chain with external network connections confirms this is an attack chain, not benign activity. Slight confidence reduction from 0.85 to 0.90 reflects the inability to distinguish lateral movement from persistence without event logs, though both fall under the claimed WMI compromise vector.",
+        "reviewed_at": "2026-06-10T06:50:17.382059Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:41:38.647955Z",
+      "updated_at": "2026-06-10T06:50:27.512938Z"
+    },
+    {
+      "id": "7d0c9d76d5a8",
+      "claim": "Adversary executed cmd.exe (PID 4808) which spawned Uninstall.exe (PID 2340) that made an outbound MSRPC connection to 172.16.7.12:135 — consistent with lateral movement or remote reconnaissance activity on 2018-09-06.",
+      "severity": "medium",
+      "confidence": 0.65,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "73bf946ea0df9acf44c812a018ddcac7f54a6404966891f0ebfc5e54b4253e9c",
+          "output_bytes": 39885,
+          "ran_at": "2026-06-10T06:40:15.349360Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1021.003",
+        "T1059.003"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.65,
+        "refutation_attempt": "1) EPROCESS list is corrupted — pslist, pstree, cmdline, dlllist all return empty, so we have no command-line arguments, executable paths, or DLL evidence to distinguish malicious from benign. 2) cmd.exe's parent (PPID 6956) is missing from psscan entirely — we cannot trace who or what launched cmd.exe. 3) \"Uninstall.exe\" could be a legitimate enterprise software uninstaller (McAfee ePO components — mfemactl.exe, masvc.exe, macmnsvc.exe, macompatsvc.ex — are all present on the system; enterprise uninstallers routinely make MSRPC calls to remote management servers). 4) The processes ran for only ~2 seconds and the TCP connection state is CLOSED — a very brief single MSRPC query is as consistent with a legitimate uninstall check as with reconnaissance. 5) The system already has established SMB connections to 172.16.7.x hosts (172.16.7.12:60360, 172.16.7.13, 172.16.7.14, 172.16.7.16), so communication with that subnet is normal.",
+        "rationale": "The factual core of the claim holds up under independent verification: psscan confirms cmd.exe (PID 4808) spawned Uninstall.exe (PID 2340) on 2018-09-06, and netscan confirms Uninstall.exe had a TCP connection to 172.16.7.12:135 (MSRPC). These are directly observable from the pool-scan evidence. However, the \"adversary\" attribution and \"lateral movement/reconnaissance\" characterization are inferences that go beyond what the raw data can prove — especially given the EPROCESS corruption that prevents examining command lines, DLL loads, or executable paths. Multiple legitimate alternative explanations exist (enterprise software uninstall, McAfee ePO communication to a management server on 172.16.7.12). The evidence is consistent with the claim's interpretation but does not directly support it over benign alternatives.",
+        "reviewed_at": "2026-06-10T06:52:49.819274Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:41:59.252656Z",
+      "updated_at": "2026-06-10T06:52:59.024894Z"
+    },
+    {
+      "id": "01f0829d4b76",
+      "claim": "Suspicious reg.exe execution (PID 2724) on 2018-09-06 16:00:04, consistent with adversary modifying registry for persistence or configuration changes during the compromise window.",
+      "severity": "medium",
+      "confidence": 0.3,
+      "status": "inferred",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:39:56.114056Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1112"
+      ],
+      "review": {
+        "status": "inferred",
+        "confidence": 0.3,
+        "refutation_attempt": "Attempted to refute by: (1) confirming pslist/pstree/cmdline/dlllist all return empty — only psscan works on this image, so no command-line arguments for reg.exe can be retrieved; (2) checking that PPID 6852 is absent from psscan, making the parent untraceable; (3) noting reg.exe is a standard Windows utility used by installers, Group Policy, scheduled tasks, and Windows updates — its same-second create/exit is normal behaviour; (4) the timestamp 2018-09-06 16:00:04 UTC lands exactly at a round hour, consistent with a scheduled task; (5) Session 0 execution is expected for system services and scheduled tasks. Without cmdline arguments or parent process context, the execution is indistinguishable from benign registry operations.",
+        "rationale": "The raw psscan evidence confirms reg.exe PID 2724 ran briefly at the stated time — that part is factually correct. However, the claim that this is \"suspicious\" and \"consistent with adversary modifying registry for persistence\" is inferential. No command-line arguments, no parent process traceability, no registry artifacts, and no memory-resident code (malfind empty) link this specific reg.exe execution to adversary activity. The broader image does contain other suspicious indicators (powershell.exe C2 chain, subject_srv.exe), but the investigator did not tie reg.exe to those, and many legitimate Windows operations invoke reg.exe in Session 0. The finding overstates what can be concluded from a pool-tag remnant alone.",
+        "reviewed_at": "2026-06-10T06:54:42.652826Z"
+      },
+      "iteration": 0,
+      "created_at": "2026-06-10T06:42:09.484204Z",
+      "updated_at": "2026-06-10T06:54:53.750698Z"
+    },
+    {
+      "id": "fe556054e3a0",
+      "claim": "WmiPrvSE.exe (PID 1196) spawned a 64-bit powershell.exe (PID 4072) on 2018-08-28, which spawned a 32-bit (Wow64) powershell.exe (PID 3164) that then spawned at least 28 short-lived rundll32.exe instances between 2018-08-30 and 2018-09-06, with lifetimes ranging from 2 to 38 seconds. Both powershell.exe processes remain alive and made TCP connections to 172.16.4.10:8080 — a pattern consistent with a PowerShell-based remote access / C2 framework but not attributable to any specific toolkit on available evidence.",
+      "severity": "high",
+      "confidence": 0.82,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:55:08.744264Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "73bf946ea0df9acf44c812a018ddcac7f54a6404966891f0ebfc5e54b4253e9c",
+          "output_bytes": 39885,
+          "ran_at": "2026-06-10T06:55:13.743537Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1059.001",
+        "T1218.011",
+        "T1105"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.82,
+        "refutation_attempt": "I attempted to refute by: (1) checking whether pslist/pstree could cross-validate the \"remain alive\" claim — they returned empty, so I must rely on psscan ExitTime:null with Threads>0 which is less authoritative; (2) checking ngentask.exe also connecting to 172.16.4.10:8080 as a potential benign explanation — it's a legitimate .NET binary but its 1-second lifetime and shared C2 address are suspicious rather than exculpatory; (3) looking for malfind hits on both powershell processes — none found, though PowerShell-based C2 often avoids classic injection; (4) verifying exact rundll32.exe count, lifetimes, and date range independently — all match. No cmdline available to examine rundll32 arguments, which leaves a small gap.",
+        "rationale": "All material factual claims are directly supported by psscan and netscan: the WmiPrvSE→powershell64→powershell32 parent chain with create times, the Wow64 architecture split, exactly 28 rundll32.exe instances with PPID 3164 spanning 2018-08-30 through 2018-09-06 with 2-38 second lifetimes, and both powershell processes connecting to 172.16.4.10:8080. The only weakness is inability to cross-validate via pslist (empty on this image) and no cmdline/malfind data. The ngentask.exe connection to the same IP:port is noted but doesn't materially refute the finding. Confidence reduced from the investigator's 0.85 to 0.82 due to the empty pslist limiting process-liveness confirmation.",
+        "reviewed_at": "2026-06-10T07:00:07.304018Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-10T06:57:15.685444Z",
+      "updated_at": "2026-06-10T07:00:14.558265Z"
+    },
+    {
+      "id": "91ef217f87fa",
+      "claim": "On 2018-09-06, cmd.exe (PID 4808, PPID 6956) spawned Uninstall.exe (PID 2340) which initiated an outbound TCP connection to 172.16.7.12:135 (MSRPC endpoint mapper). Both processes were extremely short-lived (~2 seconds each). The MSRPC connection to a remote internal host is consistent with remote administration or software deployment activity, but benign alternatives (e.g. McAfee ePO-driven uninstall, evidenced by macompatsvc.exe/masvc.exe/macmnsvc.exe/mfemactl.exe on the host) cannot be ruled out.",
+      "severity": "medium",
+      "confidence": 0.9,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "tool": "vol_psscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.psscan"
+          ],
+          "output_excerpt": "[{\"CreateTime\": \"2018-09-05T14:06:04+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handles\": null, \"ImageFileName\": \"winlogon.exe\", \"Offset(V)\": 68249920, \"PID\": 6784, \"PPID\": 5448, \"SessionId\": null, \"Threads\": 0, \"Wow64\": false, \"__children\": []}, {\"CreateTime\": \"2018-09-05T14:06:07+00:00\", \"ExitTime\": \"2018-09-05T15:03:13+00:00\", \"File output\": \"Disabled\", \"Handle",
+          "output_sha256": "f7e253cac99a942b02bd13830f5a8fb28827ba90106fefd194ad2c378ca3e0fc",
+          "output_bytes": 32294,
+          "ran_at": "2026-06-10T06:55:08.744264Z"
+        },
+        {
+          "tool": "vol_netscan",
+          "command": [
+            "/home/dministrator/siftpp-venv-linux/bin/vol",
+            "-q",
+            "-r",
+            "json",
+            "-f",
+            "/home/dministrator/ev/base-file-memory.img",
+            "windows.netscan"
+          ],
+          "output_excerpt": "[{\"Created\": null, \"ForeignAddr\": \"172.16.7.12\", \"ForeignPort\": 135, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 58810, \"Offset\": 77133936, \"Owner\": \"Uninstall.exe\", \"PID\": 2340, \"Proto\": \"TCPv4\", \"State\": \"CLOSED\", \"__children\": []}, {\"Created\": null, \"ForeignAddr\": \"172.16.5.25\", \"ForeignPort\": 5682, \"LocalAddr\": \"172.16.4.5\", \"LocalPort\": 59300, \"Offset\": 637877184, \"Owner\": \"subject_srv.ex\", \"PID\"",
+          "output_sha256": "73bf946ea0df9acf44c812a018ddcac7f54a6404966891f0ebfc5e54b4253e9c",
+          "output_bytes": 39885,
+          "ran_at": "2026-06-10T06:55:13.743537Z"
+        }
+      ],
+      "mitre_attack": [
+        "T1021.003"
+      ],
+      "review": {
+        "status": "confirmed",
+        "confidence": 0.9,
+        "refutation_attempt": "I independently re-ran vol_netscan and vol_psscan and verified: (1) cmd.exe PID 4808 (PPID 6956) at offset 2087782720 with CreateTime 2018-09-06T16:36:33 / ExitTime 16:36:35; (2) Uninstall.exe PID 2340 (PPID 4808) at offset 1027592320 with identical CreateTime/ExitTime; (3) netscan confirms TCP CLOSED from Uninstall.exe/PID 2340 to 172.16.7.12:135 from local 172.16.4.5:58810. I attempted to disprove by: checking pslist/pstree (empty — failed EPROCESS walk, so psscan-only is appropriate), searching for PPID 6956 (not found in psscan, so upstream parent unknown), checking cmdline (empty — process pool data likely aged out), checking for alternative explanations (McAfee ePO agents macompatsvc.exe/masvc.exe/macmnsvc.exe/mfemactl.exe confirmed running since 2018-08-08). No contradictory evidence found. The ~2-second lifetime is directly measured from psscan CreateTime/ExitTime deltas.",
+        "rationale": "All factual claims are directly supported by raw evidence from psscan and netscan. The parent-child relationship (cmd.exe→Uninstall.exe) is confirmed by matching PPID 4808. The MSRPC connection to 172.16.7.12:135 is confirmed. The McAfee ePO agent processes are present. The only minor gap is that PPID 6956 (cmd.exe's parent) cannot be identified from the available pool data, but the claim does not assert its identity. Confidence reduced from 1.0 to 0.9 solely because the upstream parent is unknown and the benign-alternative caveat cannot be ruled in or out from memory alone.",
+        "reviewed_at": "2026-06-10T07:01:52.901974Z"
+      },
+      "iteration": 1,
+      "created_at": "2026-06-10T06:57:27.151964Z",
+      "updated_at": "2026-06-10T07:02:03.146925Z"
+    }
+  ],
+  "summary": "4 confirmed of 8 findings; 1 self-correction iteration(s); evidence integrity verified.",
+  "iterations_run": 1,
+  "generated_at": "2026-06-10T07:02:05.000562Z"
+}
