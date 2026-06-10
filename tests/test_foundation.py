@@ -88,3 +88,22 @@ def test_audit_resumes_chain(tmp_path):
     AuditLogger(path).log("b")  # reopen; should continue the chain, not reset
     ok, n = verify_chain(path)
     assert ok and n == 2
+
+
+def test_audit_echo_streams_events_to_stderr(tmp_path, capsys):
+    log = AuditLogger(tmp_path / "audit.jsonl", echo=True)
+    log.log("run_start", evidence_sha256="ab" * 32)
+    log.tool_call(agent="investigator", tool="vol3.pslist",
+                  command=["vol", "-f", "mem.raw", "windows.pslist"],
+                  output_sha256="a" * 64, output_bytes=128, duration_ms=42)
+    log.log("review_submitted", agent="skeptic", finding_id="f1",
+            status="refuted", confidence=0.3)
+    err = capsys.readouterr().err
+    assert "run_start" in err and "vol3.pslist" in err and "REFUTED" in err
+    assert err.count("\n") == 3
+
+
+def test_audit_echo_off_by_default(tmp_path, capsys, monkeypatch):
+    monkeypatch.delenv("SIFTPP_ECHO", raising=False)
+    AuditLogger(tmp_path / "audit.jsonl").log("run_start")
+    assert capsys.readouterr().err == ""

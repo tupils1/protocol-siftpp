@@ -111,7 +111,7 @@ async def _run(args: argparse.Namespace) -> None:
     out = Path(args.out) if args.out else Path("analysis") / case_id
     out.mkdir(parents=True, exist_ok=True)
 
-    audit = AuditLogger(out / "audit.jsonl")
+    audit = AuditLogger(out / "audit.jsonl", echo=True if args.echo else None)
     params = _server_params(evidence, out / "mcp-server.jsonl", args.offline)
     provider = normalize_provider(args.provider)
     model = args.model or default_model(provider)
@@ -147,6 +147,11 @@ def main() -> None:
     p.add_argument("--case-id", help="Case identifier")
     p.add_argument("--max-iterations", type=int, default=3, help="Self-correction rounds")
     p.add_argument("--offline", action="store_true", help="No Volatility symbol downloads")
+    p.add_argument(
+        "--echo",
+        action="store_true",
+        help="Stream one line per audit event (tool calls, findings, reviews) to stderr",
+    )
     p.add_argument(
         "--provider",
         default=os.environ.get("SIFTPP_LLM_PROVIDER", "anthropic"),

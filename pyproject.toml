@@ -26,6 +26,7 @@ siftpp-download-case = "protocol_siftpp.sample_case:main"
 siftpp-report = "protocol_siftpp.report_html:main"
 siftpp-gui = "protocol_siftpp.gui:main"
 siftpp-verify = "protocol_siftpp.verify_all:main"
+siftpp-trace = "protocol_siftpp.trace:main"
 
 [dependency-groups]
 dev = [

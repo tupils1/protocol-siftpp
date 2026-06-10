@@ -2,7 +2,7 @@
 
     uv run siftpp-verify
 
-Runs the test suite, verifies all three committed audit hash chains, and runs the
+Runs the test suite, verifies every committed audit hash chain, and runs the
 live spoliation-resistance + tamper-evidence proofs against the real read-only MCP
 server. Prints a checklist and exits non-zero if anything fails. The forensic
 proofs need NO API key.
@@ -27,6 +27,7 @@ AUDITS = [
     ("SANS srl-2018 (Windows)", EXAMPLES / "srl-2018-base-file-memory" / "audit.jsonl"),
     ("SANS srl-2018 (Linux)", EXAMPLES / "srl-2018-linux" / "audit.jsonl"),
     ("M57 Pat (public case)", EXAMPLES / "m57-pat-2009-12-05" / "audit.jsonl"),
+    ("SANS srl-2018 (demo-video run)", EXAMPLES / "srl-2018-live" / "audit.jsonl"),
 ]
 
 
